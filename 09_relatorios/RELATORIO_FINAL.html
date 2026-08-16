@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Relat��rio Final ��� METABRIC</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="estilo.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Relat��rio Final ��� METABRIC</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#expressão-gênica-prognóstico-e-aprendizado-de-máquina-no-câncer-de-mama"
+id="toc-expressão-gênica-prognóstico-e-aprendizado-de-máquina-no-câncer-de-mama">Expressão
+gênica, prognóstico e aprendizado de máquina no câncer de mama</a>
+<ul>
+<li><a href="#relatório-final-consolidado-coorte-metabric-n-1.897"
+id="toc-relatório-final-consolidado-coorte-metabric-n-1.897">Relatório
+final consolidado — coorte METABRIC (n = 1.897)</a></li>
+<li><a href="#sumário" id="toc-sumário">Sumário</a></li>
+<li><a href="#sumário-executivo" id="toc-sumário-executivo">1. Sumário
+executivo</a></li>
+<li><a href="#como-ler-os-números" id="toc-como-ler-os-números">2. Como
+ler os números</a></li>
+<li><a href="#dados-coorte-e-integridade"
+id="toc-dados-coorte-e-integridade">3. Dados, coorte e
+integridade</a></li>
+<li><a href="#métodos" id="toc-métodos">4. Métodos</a></li>
+<li><a href="#resultados-caracterização-clínica-e-molecular"
+id="toc-resultados-caracterização-clínica-e-molecular">5. Resultados —
+caracterização clínica e molecular</a></li>
+<li><a href="#resultados-genes-associados-à-sobrevida"
+id="toc-resultados-genes-associados-à-sobrevida">6. Resultados — genes
+associados à sobrevida</a></li>
+<li><a href="#resultados-aprendizado-de-máquina"
+id="toc-resultados-aprendizado-de-máquina">7. Resultados — aprendizado
+de máquina</a></li>
+<li><a href="#resultados-onde-o-modelo-falha"
+id="toc-resultados-onde-o-modelo-falha">8. Resultados — onde o modelo
+falha</a></li>
+<li><a href="#camada-farmacogenômica" id="toc-camada-farmacogenômica">9.
+Camada farmacogenômica</a></li>
+<li><a href="#plataforma-de-inferência"
+id="toc-plataforma-de-inferência">10. Plataforma de inferência</a></li>
+<li><a href="#erros-cometidos-e-corrigidos"
+id="toc-erros-cometidos-e-corrigidos">11. Erros cometidos e
+corrigidos</a></li>
+<li><a href="#limitações" id="toc-limitações">12. Limitações</a></li>
+<li><a href="#próximos-passos" id="toc-próximos-passos">13. Próximos
+passos</a></li>
+<li><a href="#inventário-do-pacote" id="toc-inventário-do-pacote">14.
+Inventário do pacote</a></li>
+<li><a href="#referências" id="toc-referências">15. Referências</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1
+id="expressão-gênica-prognóstico-e-aprendizado-de-máquina-no-câncer-de-mama">Expressão
+gênica, prognóstico e aprendizado de máquina no câncer de mama</h1>
+<h2 id="relatório-final-consolidado-coorte-metabric-n-1.897">Relatório
+final consolidado — coorte METABRIC (n = 1.897)</h2>
+<p><strong>Instituição:</strong> Faculdade de Ciências Farmacêuticas,
+Universidade Federal do Amazonas <strong>Coorte:</strong> METABRIC —
+Curtis et al., <em>Nature</em> 2012; Pereira et al., <em>Nat Commun</em>
+2016 <strong>Dados:</strong> <code>METABRIC_RNA_Mutation.csv</code>, MD5
+<code>c619471beb87af0f9fd4e4a40058654d</code> <strong>Ambiente:</strong>
+R 4.3.3 (22 pacotes) e Python 3.12 (scikit-learn 1.8.0, lifelines
+0.30.3, XGBoost 3.4.1) <strong>Semente fixa 42</strong> em todas as
+etapas aleatórias — todos os números deste relatório são
+reproduzíveis.</p>
+<hr />
+<h2 id="sumário">Sumário</h2>
+<ol type="1">
+<li><a href="#1-sumário-executivo">Sumário executivo</a></li>
+<li><a href="#2-como-ler-os-números">Como ler os números</a></li>
+<li><a href="#3-dados-coorte-e-integridade">Dados, coorte e
+integridade</a></li>
+<li><a href="#4-métodos">Métodos</a></li>
+<li><a
+href="#5-resultados--caracterização-clínica-e-molecular">Resultados —
+caracterização clínica e molecular</a></li>
+<li><a href="#6-resultados--genes-associados-à-sobrevida">Resultados —
+genes associados à sobrevida</a></li>
+<li><a href="#7-resultados--aprendizado-de-máquina">Resultados —
+aprendizado de máquina</a></li>
+<li><a href="#8-resultados--onde-o-modelo-falha">Resultados — onde o
+modelo falha</a></li>
+<li><a href="#9-camada-farmacogenômica">Camada farmacogenômica</a></li>
+<li><a href="#10-plataforma-de-inferência">Plataforma de
+inferência</a></li>
+<li><a href="#11-erros-cometidos-e-corrigidos">Erros cometidos e
+corrigidos</a></li>
+<li><a href="#12-limitações">Limitações</a></li>
+<li><a href="#13-próximos-passos">Próximos passos</a></li>
+<li><a href="#14-inventário-do-pacote">Inventário do pacote</a></li>
+<li><a href="#15-referências">Referências</a></li>
+</ol>
+<hr />
+<h2 id="sumário-executivo">1. Sumário executivo</h2>
+<p>Este trabalho analisou 1.897 pacientes da coorte METABRIC combinando
+expressão de 489 genes, status mutacional de 173 genes e 31 variáveis
+clínicas, com três objetivos: identificar genes associados à sobrevida,
+comparar algoritmos de aprendizado de máquina para prever desfecho, e
+construir uma plataforma de inferência com limites de confiabilidade
+explícitos.</p>
+<p><strong>Os dez achados centrais:</strong></p>
+<ol type="1">
+<li><p><strong>125 genes associam-se à sobrevida global</strong> (FDR
+&lt; 0,05): 61 protetores e 64 de risco. Núcleo de pior prognóstico:
+<em>GSK3B</em>, <em>AURKA</em>, <em>VEGFA</em>, <em>FANCD2</em>. Núcleo
+de melhor prognóstico: <em>IGF1</em>, <em>STAT5A</em>, <em>SPRY2</em>,
+<em>CDKN2C</em>, <em>FLT3</em>, <em>ABCB1</em>.</p></li>
+<li><p><strong>Três famílias metodológicas convergem</strong> para o
+mesmo núcleo (<em>GSK3B</em>, <em>AURKA</em>, <em>STAT5A</em>,
+<em>FLT3</em>, <em>BCL2</em>): Cox univariado, seleção estável do LASSO
+em 25 repetições e importância do Random Forest — apesar de pressupostos
+radicalmente distintos.</p></li>
+<li><p><strong>O sinal gênico é dependente do contexto.</strong> No
+subtipo LumA, 12 de 12 genes testados são significativos; nos subtipos
+Basal e Her2, <strong>nenhum</strong>. No estágio II, 71 genes; nos
+estágios I e III–IV, apenas um em cada. Um painel derivado da coorte
+inteira é, na prática, um painel para doença luminal.</p></li>
+<li><p><strong>568 associações gene–subtipo</strong> com assinaturas
+biologicamente coerentes, incluindo um controle positivo interno
+perfeito (<em>ERBB2</em> superexpresso exatamente no subtipo
+Her2).</p></li>
+<li><p><strong>A classificação dos subtipos por expressão atinge 78,7%
+de acurácia</strong> (Gradient Boosting), com erro concentrado entre
+pares biologicamente adjacentes.</p></li>
+<li><p><strong>A maior falha do classificador é do rótulo, não do
+algoritmo.</strong> O grupo “Normal-like” tem recall de 0,350, e o erro
+se associa à celularidade tumoral (FDR = 0,011) — não a grau, HER2,
+idade ou carga mutacional (todos FDR &gt; 0,13).</p></li>
+<li><p><strong>Dezesseis modelos preditivos foram treinados</strong> (6
+algoritmos × 3 conjuntos de variáveis) com busca de hiperparâmetros
+aninhada. O melhor é XGBoost sobre variáveis clínicas + expressão (AUC
+0,749), mas seu intervalo de confiança se sobrepõe ao do segundo
+colocado.</p></li>
+<li><p><strong>A expressão gênica isolada perde para 6 variáveis
+clínicas</strong> em onze de onze algoritmos testados, todos com FDR
+&lt; 0,003 e na mesma direção — o achado mais robusto do trabalho,
+precisamente por ser independente de escolha metodológica.</p></li>
+<li><p><strong>A ordenação de risco funciona; a probabilidade absoluta
+exigia correção.</strong> Os tercis de risco separam sobrevida mediana
+de 217,6 a 85,7 meses (log-rank p = 1,8 × 10⁻³⁶), mas o modelo era
+grosseiramente descalibrado (Hosmer-Lemeshow p = 5,7 × 10⁻¹⁶³) até a
+aplicação de regressão isotônica ajustada dentro da validação (p = 0,66
+depois).</p></li>
+<li><p><strong>Existe sinal farmacogenômico para
+hormonioterapia:</strong> 14 genes modificam significativamente o efeito
+prognóstico conforme a paciente recebeu ou não bloqueio endócrino, e
+todos resistem ao ajuste por status de ER e subtipo molecular.</p></li>
+</ol>
+<hr />
+<h2 id="como-ler-os-números">2. Como ler os números</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Termo</th>
+<th>Significado neste relatório</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>z-score de expressão</strong></td>
+<td>Expressão padronizada: 0 é a média da coorte, +1 é um desvio-padrão
+acima</td>
+</tr>
+<tr class="even">
+<td><strong>HR (hazard ratio)</strong></td>
+<td>Risco relativo de óbito por <strong>+1 desvio-padrão</strong> de
+expressão. HR 1,20 = 20% mais risco; 0,80 = 20% menos</td>
+</tr>
+<tr class="odd">
+<td><strong>IC 95%</strong></td>
+<td>Faixa compatível com os dados. Se não cruza 1 (HR) ou 0,5 (AUC), o
+efeito é detectável</td>
+</tr>
+<tr class="even">
+<td><strong>FDR</strong></td>
+<td>Valor-p corrigido para múltiplos testes (Benjamini-Hochberg)</td>
+</tr>
+<tr class="odd">
+<td><strong>Δz</strong></td>
+<td>Diferença de expressão média entre um subtipo e os demais, em
+desvios-padrão</td>
+</tr>
+<tr class="even">
+<td><strong>AUC</strong></td>
+<td>Probabilidade de ordenar corretamente dois pacientes quanto ao
+risco. 0,5 = acaso</td>
+</tr>
+<tr class="odd">
+<td><strong>C-index</strong></td>
+<td>Análogo da AUC para dados de sobrevida censurados</td>
+</tr>
+<tr class="even">
+<td><strong>Escore de Brier</strong></td>
+<td>Erro quadrático médio da probabilidade prevista. Menor é melhor</td>
+</tr>
+<tr class="odd">
+<td><strong>Hosmer-Lemeshow</strong></td>
+<td>Teste de calibração. <strong>p alto = boa calibração</strong> (ao
+contrário do usual)</td>
+</tr>
+<tr class="even">
+<td><strong>OS / DSS</strong></td>
+<td>Sobrevida global (qualquer causa) / específica do câncer</td>
+</tr>
+<tr class="odd">
+<td><strong>Erro out-of-bag</strong></td>
+<td>Estimativa honesta de erro do Random Forest, com os casos que cada
+árvore não viu</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="dados-coorte-e-integridade">3. Dados, coorte e integridade</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pacientes no arquivo bruto</td>
+<td>1.904</td>
+</tr>
+<tr class="even">
+<td><strong>Coorte analítica</strong></td>
+<td><strong>1.897</strong></td>
+</tr>
+<tr class="odd">
+<td>Colunas</td>
+<td>693 (31 clínicas + 489 expressão + 173 mutação)</td>
+</tr>
+<tr class="even">
+<td>Plataforma</td>
+<td>Illumina HT-12 v3 (microarranjo); sequenciamento alvo para
+mutações</td>
+</tr>
+<tr class="odd">
+<td>Seguimento mediano</td>
+<td>115,6 meses</td>
+</tr>
+<tr class="even">
+<td>Óbitos por qualquer causa</td>
+<td>1.098</td>
+</tr>
+<tr class="odd">
+<td>Óbitos atribuídos ao câncer</td>
+<td>619</td>
+</tr>
+<tr class="even">
+<td>IDs duplicados / ausentes</td>
+<td>0 / 0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exclusões:</strong> 1 sarcoma mamário, 6 casos sem
+classificação de subtipo (<code>NC</code>).</p>
+<p><strong>Auditoria da codificação do desfecho — etapa
+crítica.</strong> Este conjunto de dados é frequentemente analisado com
+o evento invertido, o que produziria conclusões exatamente opostas. A
+tabulação cruzada (<code>T02</code>) confirma que
+<code>overall_survival = 1</code> significa <strong>paciente
+viva</strong>; o evento de óbito foi definido como
+<code>1 − overall_survival</code>.</p>
+<p><strong>Coorte de modelagem preditiva.</strong> Para os modelos de
+óbito em 10 anos, só entram pacientes cujo desfecho é determinado — quem
+morreu antes de 120 meses ou foi seguido por pelo menos 120 meses:
+<strong>n = 1.560, 702 óbitos (45,0%)</strong>. Isso evita censura
+informativa.</p>
+<p><strong>Estágio tumoral:</strong> disponível em 1.400 pacientes
+(73,8%). Agrupamento: estágios 0–1 como <strong>I</strong> (n = 479),
+estágio 2 como <strong>II</strong> (n = 797), estágios 3–4 como
+<strong>III–IV</strong> (n = 124).</p>
+<hr />
+<h2 id="métodos">4. Métodos</h2>
+<h3 id="pipeline-principal-em-r-12-módulos">4.1 Pipeline principal em R
+— 12 módulos</h3>
+<p>Parâmetros declarados <em>a priori</em> em um único objeto de
+configuração, evitando escolhas post-hoc: FDR &lt; 0,01 e |Δz| ≥ 0,50
+para expressão diferencial; FDR &lt; 0,05 para modelos de Cox; partição
+70/30; 500 árvores; 10 dobras na validação cruzada; frequência mínima de
+2% para mutações.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Módulo</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0–2</td>
+<td>Ambiente, ingestão, integridade, auditoria do desfecho, matriz 489 ×
+1.897</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>Caracterização clínica por subtipo (qui-quadrado, Kruskal-Wallis,
+correção BH)</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>Expressão diferencial com <strong>limma</strong> — modelos lineares
+por gene, moderação bayesiana empírica</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td><strong>Random Forest</strong> de classificação dos 6 subtipos, erro
+OOB, importância</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td><strong>Cox univariado</strong> dos 489 genes em OS e DSS; teste de
+riscos proporcionais; Cox ajustado</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>Kaplan-Meier e <strong>Cox estratificado dentro de cada
+subtipo</strong></td>
+</tr>
+<tr class="odd">
+<td>8</td>
+<td><strong>Assinatura LASSO-Cox</strong> com validação em partição
+independente</td>
+</tr>
+<tr class="even">
+<td>8b</td>
+<td><strong>Validação repetida em 25 partições</strong> e estabilidade
+de seleção</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>Mutações somáticas: heterogeneidade e associação com sobrevida</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>Integração das camadas e escore de prioridade por subtipo</td>
+</tr>
+</tbody>
+</table>
+<h3 id="análises-complementares-em-python">4.2 Análises complementares
+em Python</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Análise</th>
+<th>Desenho</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cox por estágio</td>
+<td>489 modelos univariados dentro de cada estrato, correção BH
+separada</td>
+</tr>
+<tr class="even">
+<td>Interação gene × tratamento</td>
+<td>1.467 modelos com termo de interação, ajustados por idade, grau e
+tamanho</td>
+</tr>
+<tr class="odd">
+<td>Random Forest de desfecho</td>
+<td>Óbito em 10 anos, validação cruzada 5-fold estratificada</td>
+</tr>
+<tr class="even">
+<td>Benchmark de 11 algoritmos</td>
+<td>5-fold × 3 repetições, testes de Nadeau-Bengio, McNemar e
+DeLong</td>
+</tr>
+<tr class="odd">
+<td>Treino final multi-algoritmo</td>
+<td>16 modelos com busca de hiperparâmetros aninhada</td>
+</tr>
+</tbody>
+</table>
+<h3 id="como-o-auc-de-cada-método-é-obtido">4.3 Como o AUC de cada
+método é obtido</h3>
+<p>Este é o ponto onde a maioria dos trabalhos superestima o desempenho.
+O procedimento:</p>
+<ol type="1">
+<li><strong>Partição externa:</strong>
+<code>StratifiedKFold(5, shuffle=True, random_state=42)</code>.</li>
+<li><strong>Busca de hiperparâmetros DENTRO de cada dobra:</strong>
+<code>RandomizedSearchCV</code> com 3 dobras internas. Escolher
+hiperparâmetros com o teste à vista infla a AUC.</li>
+<li><strong>Seleção de variáveis dentro da dobra:</strong> quando há
+seleção L1, ela é um passo do <code>Pipeline</code>, não uma etapa
+prévia.</li>
+<li><strong>Predições fora da amostra:</strong>
+<code>cross_val_predict</code> devolve, para cada paciente, a
+probabilidade estimada por um modelo que nunca o viu no treino.</li>
+<li><strong>AUC e IC 95%:</strong> método de <strong>DeLong</strong>,
+que estima a variância a partir dos midranks.</li>
+<li><strong>Calibração:</strong> regressão isotônica ajustada dentro da
+validação; avaliação por Brier e Hosmer-Lemeshow.</li>
+<li><strong>Verificação da reimplementação:</strong> cada modelo
+exportado é reexecutado em Python puro, percorrendo as árvores nó a nó
+como o JavaScript faz, e comparado ao scikit-learn. <strong>Erro máximo:
+3 × 10⁻⁶.</strong></li>
+</ol>
+<hr />
+<h2 id="resultados-caracterização-clínica-e-molecular">5. Resultados —
+caracterização clínica e molecular</h2>
+<h3 id="perfil-clínico-por-subtipo">5.1 Perfil clínico por subtipo</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Subtipo</th>
+<th>n (%)</th>
+<th>Idade</th>
+<th>Tamanho (mm)</th>
+<th>G3 (%)</th>
+<th>N+ (%)</th>
+<th>ER+ (%)</th>
+<th>HER2+ (%)</th>
+<th>NPI</th>
+<th>Óbitos (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LumA</td>
+<td>679 (35,8)</td>
+<td>63,2</td>
+<td>20,5</td>
+<td>25,9</td>
+<td>42,3</td>
+<td>99,6</td>
+<td>3,1</td>
+<td>3,08</td>
+<td>53,6</td>
+</tr>
+<tr class="even">
+<td>LumB</td>
+<td>461 (24,3)</td>
+<td>66,2</td>
+<td>25,0</td>
+<td>55,6</td>
+<td>51,4</td>
+<td>100,0</td>
+<td>9,1</td>
+<td>4,05</td>
+<td>65,7</td>
+</tr>
+<tr class="odd">
+<td>Her2</td>
+<td>220 (11,6)</td>
+<td>58,8</td>
+<td>25,0</td>
+<td>73,7</td>
+<td>57,3</td>
+<td>42,3</td>
+<td>56,8</td>
+<td>4,08</td>
+<td>70,5</td>
+</tr>
+<tr class="even">
+<td>Basal</td>
+<td>199 (10,5)</td>
+<td>54,5</td>
+<td>25,0</td>
+<td>90,5</td>
+<td>53,8</td>
+<td>13,6</td>
+<td>10,1</td>
+<td>5,02</td>
+<td>55,8</td>
+</tr>
+<tr class="odd">
+<td>claudin-low</td>
+<td>198 (10,4)</td>
+<td>58,5</td>
+<td>20,0</td>
+<td>67,9</td>
+<td>47,5</td>
+<td>38,4</td>
+<td>7,6</td>
+<td>4,05</td>
+<td>44,9</td>
+</tr>
+<tr class="even">
+<td>Normal</td>
+<td>140 (7,4)</td>
+<td>57,8</td>
+<td>23,0</td>
+<td>34,1</td>
+<td>40,0</td>
+<td>85,7</td>
+<td>9,3</td>
+<td>4,03</td>
+<td>54,3</td>
+</tr>
+</tbody>
+</table>
+<p>As 14 variáveis clínicas testadas diferiram entre subtipos após
+correção BH. As mais discriminantes: status de ER (FDR = 4,0 × 10⁻²³³),
+PR (3,9 × 10⁻¹⁰⁶), HER2 (2,8 × 10⁻⁹⁷) e grau histológico (5,1 ×
+10⁻⁸⁰).</p>
+<h3 id="sobrevida-por-subtipo-e-por-estágio">5.2 Sobrevida por subtipo e
+por estágio</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Subtipo</th>
+<th>n</th>
+<th>Óbitos</th>
+<th>Mediana de OS</th>
+<th></th>
+<th>Estágio</th>
+<th>n</th>
+<th>Óbitos</th>
+<th>Mediana de OS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>claudin-low</td>
+<td>198</td>
+<td>89</td>
+<td>219,2 meses</td>
+<td></td>
+<td>I</td>
+<td>479</td>
+<td>216</td>
+<td>227,9 meses</td>
+</tr>
+<tr class="even">
+<td>LumA</td>
+<td>679</td>
+<td>364</td>
+<td>186,6 meses</td>
+<td></td>
+<td>II</td>
+<td>797</td>
+<td>480</td>
+<td>140,8 meses</td>
+</tr>
+<tr class="odd">
+<td>Normal</td>
+<td>140</td>
+<td>76</td>
+<td>158,5 meses</td>
+<td></td>
+<td>III–IV</td>
+<td>124</td>
+<td>94</td>
+<td>55,5 meses</td>
+</tr>
+<tr class="even">
+<td>Basal</td>
+<td>199</td>
+<td>111</td>
+<td>130,9 meses</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>LumB</td>
+<td>461</td>
+<td>303</td>
+<td>123,0 meses</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Her2</td>
+<td>220</td>
+<td>155</td>
+<td>104,0 meses</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Log-rank por subtipo: <strong>p = 3,74 × 10⁻¹⁰</strong>. Por estágio:
+<strong>p = 1,21 × 10⁻²⁵</strong> — o estágio clínico separa a coorte
+com força muito superior à do subtipo molecular.</p>
+<p>O METABRIC é uma coorte majoritariamente
+<strong>pré-trastuzumabe</strong>, o que explica o Her2 aparecer com a
+pior sobrevida mediana. O Basal, apesar do perfil clínico mais
+agressivo, não ocupa a última posição — reflexo do padrão conhecido de
+risco precoce alto seguido de platô, enquanto os luminais mantêm risco
+tardio persistente. Esse cruzamento de curvas é também a razão pela qual
+o pressuposto de riscos proporcionais é problemático nesta coorte.</p>
+<h3 id="genes-que-definem-cada-subtipo">5.3 Genes que definem cada
+subtipo</h3>
+<p><strong>568 associações gene–subtipo</strong> com FDR &lt; 0,01
+<strong>e</strong> |Δz| ≥ 0,50 (figuras <code>F02</code>,
+<code>F03</code>).</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Subtipo</th>
+<th>Marcadores principais (Δz)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Basal</strong></td>
+<td>↑ <em>CCNE1</em> (+1,67), <em>CDKN2A</em> (+1,66), <em>CHEK1</em>
+(+1,57), <em>E2F3</em> (+1,51) · ↓ <em>TGFB3</em> (−1,41)</td>
+</tr>
+<tr class="even">
+<td><strong>Her2</strong></td>
+<td>↑ <strong><em>ERBB2</em></strong> (+1,57), <em>ARRDC1</em> (+1,12),
+<em>GSK3B</em> (+1,04) · ↓ <em>SMAD4</em>, <em>MYC</em>,
+<em>BCL2</em></td>
+</tr>
+<tr class="odd">
+<td><strong>LumA</strong></td>
+<td>↑ <em>GATA3</em> (+1,13), <em>MAPT</em> (+1,12), <em>BCL2</em>
+(+0,91) · ↓ <em>AURKA</em>, <em>CCNE1</em>, <em>E2F2</em></td>
+</tr>
+<tr class="even">
+<td><strong>LumB</strong></td>
+<td>↑ <em>GATA3</em> (+1,00) · ↓ <em>EGFR</em> (−1,06), <em>NOTCH1</em>,
+<em>FOXO1</em>, <em>SPRY2</em></td>
+</tr>
+<tr class="odd">
+<td><strong>claudin-low</strong></td>
+<td>↑ <em>FOLR2</em> (+1,57), <em>KLRG1</em> (+1,56), <em>CSF1R</em>
+(+1,37) · ↓ <em>ERBB3</em>, <em>RAB25</em></td>
+</tr>
+<tr class="even">
+<td><strong>Normal</strong></td>
+<td>↑ <em>NR2F1</em>, <em>ABCB1</em>, <em>SPRY2</em> · ↓ <em>CDK1</em>,
+<em>CHEK1</em>, <em>AURKA</em></td>
+</tr>
+</tbody>
+</table>
+<p>A superexpressão de <em>ERBB2</em> exatamente no subtipo Her2
+funciona como <strong>controle positivo interno</strong>: se a pipeline
+não recuperasse esse achado, haveria erro de processamento em algum
+ponto.</p>
+<h3 id="mutações-somáticas">5.4 Mutações somáticas</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Gene</th>
+<th>Global</th>
+<th>LumA</th>
+<th>LumB</th>
+<th>Her2</th>
+<th>Basal</th>
+<th>claudin-low</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PIK3CA</td>
+<td>41,8%</td>
+<td><strong>57,4%</strong></td>
+<td>34,9%</td>
+<td>41,4%</td>
+<td>16,1%</td>
+<td>24,2%</td>
+</tr>
+<tr class="even">
+<td>TP53</td>
+<td>34,7%</td>
+<td>11,9%</td>
+<td>24,3%</td>
+<td>70,0%</td>
+<td><strong>88,4%</strong></td>
+<td>52,0%</td>
+</tr>
+<tr class="odd">
+<td>MUC16</td>
+<td>17,2%</td>
+<td>16,6%</td>
+<td>16,1%</td>
+<td>27,3%</td>
+<td>23,1%</td>
+<td>9,6%</td>
+</tr>
+<tr class="even">
+<td>GATA3</td>
+<td>12,1%</td>
+<td>19,6%</td>
+<td>13,9%</td>
+<td>7,7%</td>
+<td>0,0%</td>
+<td>2,0%</td>
+</tr>
+<tr class="odd">
+<td>MAP3K1</td>
+<td>10,3%</td>
+<td>16,2%</td>
+<td>8,7%</td>
+<td>6,8%</td>
+<td>4,5%</td>
+<td>4,0%</td>
+</tr>
+</tbody>
+</table>
+<p>O eixo <em>TP53</em>-mutado / <em>PIK3CA</em>-selvagem (Basal, Her2)
+contra <em>PIK3CA</em>-mutado / <em>TP53</em>-selvagem (LumA) reproduz a
+dicotomia estabelecida na literatura.</p>
+<p>Associação com sobrevida: <em>GATA3</em> mutado HR 0,590 (FDR 3,3 ×
+10⁻⁵), <em>CBFB</em> 0,501, <em>TP53</em> 1,289.
+<strong>Ressalva:</strong> essas mutações concentram-se em subtipos
+específicos, de modo que os HR são fortemente confundidos pelo
+subtipo.</p>
+<hr />
+<h2 id="resultados-genes-associados-à-sobrevida">6. Resultados — genes
+associados à sobrevida</h2>
+<p>Cox univariado nos 489 genes, HR por +1 desvio-padrão de expressão,
+correção Benjamini-Hochberg. <strong>125 genes significativos (FDR &lt;
+0,05): 61 protetores e 64 de risco.</strong> Figura
+<code>F06</code>.</p>
+<h3 id="genes-associados-a-maior-sobrevida-hr-1">6.1 Genes associados a
+MAIOR sobrevida (HR &lt; 1)</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Gene</th>
+<th>HR (OS)</th>
+<th>IC 95%</th>
+<th>HR (DSS)</th>
+<th>Comentário</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>IGF1</strong></td>
+<td>0,804</td>
+<td>0,750–0,862</td>
+<td>0,820</td>
+<td>fator de crescimento; efeito protetor consistente</td>
+</tr>
+<tr class="even">
+<td><strong>STAT5A</strong></td>
+<td>0,807</td>
+<td>0,759–0,858</td>
+<td>0,753</td>
+<td>selecionado em 60% das repetições do LASSO</td>
+</tr>
+<tr class="odd">
+<td><strong>SPRY2</strong></td>
+<td>0,810</td>
+<td>0,759–0,864</td>
+<td>0,864</td>
+<td>regulador negativo de RTK</td>
+</tr>
+<tr class="even">
+<td><strong>CDKN2C</strong></td>
+<td>0,815</td>
+<td>0,760–0,874</td>
+<td>0,874</td>
+<td>inibidor de CDK</td>
+</tr>
+<tr class="odd">
+<td><strong>FLT3</strong></td>
+<td>0,820</td>
+<td>0,767–0,876</td>
+<td>0,792</td>
+<td>3º no ranking do Random Forest</td>
+</tr>
+<tr class="even">
+<td><strong>ABCB1</strong></td>
+<td>0,822</td>
+<td>0,770–0,877</td>
+<td>0,875</td>
+<td>transportador de efluxo</td>
+</tr>
+<tr class="odd">
+<td>LAMA2</td>
+<td>0,836</td>
+<td>0,788–0,887</td>
+<td>0,855</td>
+<td>matriz extracelular</td>
+</tr>
+<tr class="even">
+<td>STAT5B</td>
+<td>0,838</td>
+<td>0,790–0,890</td>
+<td>0,744</td>
+<td>par de <em>STAT5A</em></td>
+</tr>
+<tr class="odd">
+<td>PDGFRA</td>
+<td>0,844</td>
+<td>0,796–0,895</td>
+<td>0,945</td>
+<td>HR 0,695 dentro do LumA (p = 5,4 × 10⁻¹¹)</td>
+</tr>
+<tr class="even">
+<td>CCND2</td>
+<td>0,846</td>
+<td>0,796–0,899</td>
+<td>0,898</td>
+<td>ciclina D2</td>
+</tr>
+<tr class="odd">
+<td>BCL2</td>
+<td>0,849</td>
+<td>0,801–0,900</td>
+<td>0,723</td>
+<td>marcador de diferenciação luminal</td>
+</tr>
+<tr class="even">
+<td>KIT</td>
+<td>0,849</td>
+<td>0,796–0,905</td>
+<td>0,868</td>
+<td>receptor tirosina-quinase</td>
+</tr>
+</tbody>
+</table>
+<h3 id="genes-associados-a-menor-sobrevida-hr-1">6.2 Genes associados a
+MENOR sobrevida (HR &gt; 1)</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Gene</th>
+<th>HR (OS)</th>
+<th>IC 95%</th>
+<th>HR (DSS)</th>
+<th>Comentário</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>GSK3B</strong></td>
+<td>1,225</td>
+<td>1,159–1,295</td>
+<td>1,326</td>
+<td>selecionado em <strong>72%</strong> das repetições do LASSO</td>
+</tr>
+<tr class="even">
+<td><strong>AURKA</strong></td>
+<td>1,191</td>
+<td>1,123–1,262</td>
+<td><strong>1,458</strong></td>
+<td>1º no Random Forest; proliferação</td>
+</tr>
+<tr class="odd">
+<td><strong>VEGFA</strong></td>
+<td>1,165</td>
+<td>1,100–1,233</td>
+<td>1,209</td>
+<td>angiogênese</td>
+</tr>
+<tr class="even">
+<td><strong>FANCD2</strong></td>
+<td>1,163</td>
+<td>1,096–1,233</td>
+<td>1,323</td>
+<td>reparo de DNA</td>
+</tr>
+<tr class="odd">
+<td>KRAS</td>
+<td>1,153</td>
+<td>1,086–1,224</td>
+<td>1,199</td>
+<td>oncogene clássico</td>
+</tr>
+<tr class="even">
+<td>E2F7</td>
+<td>1,148</td>
+<td>1,084–1,215</td>
+<td>1,276</td>
+<td>ciclo celular</td>
+</tr>
+<tr class="odd">
+<td>TUBB4B</td>
+<td>1,144</td>
+<td>1,078–1,214</td>
+<td>1,227</td>
+<td>citoesqueleto</td>
+</tr>
+<tr class="even">
+<td>SLC19A1</td>
+<td>1,142</td>
+<td>1,078–1,209</td>
+<td>1,239</td>
+<td>transportador de folato reduzido</td>
+</tr>
+<tr class="odd">
+<td>MMP11</td>
+<td>1,134</td>
+<td>1,067–1,206</td>
+<td>1,162</td>
+<td>remodelamento de matriz</td>
+</tr>
+<tr class="even">
+<td>CTCF</td>
+<td>1,132</td>
+<td>1,068–1,200</td>
+<td>1,166</td>
+<td>organização da cromatina</td>
+</tr>
+<tr class="odd">
+<td>RPS6KB2</td>
+<td>1,131</td>
+<td>1,066–1,200</td>
+<td>—</td>
+<td>via mTOR</td>
+</tr>
+<tr class="even">
+<td>MAML1</td>
+<td>1,128</td>
+<td>1,062–1,197</td>
+<td>—</td>
+<td>via Notch</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Os HR são maiores na sobrevida específica do câncer</strong>,
+como esperado ao remover o ruído da mortalidade competitiva:
+<em>AURKA</em> passa de 1,191 (OS) para 1,458 (DSS).</p>
+<h3 id="após-ajuste-clínico">6.3 Após ajuste clínico</h3>
+<p>Ajustando por idade, grau, tamanho, linfonodos, subtipo e os três
+tratamentos, <strong>10 dos 20 genes mais fortes mantêm
+significância</strong>: <em>STAT5A</em> (0,867), <em>GSK3B</em> (1,133),
+<em>VEGFA</em> (1,125), <em>BCL2</em> (0,885), <em>CDKN2C</em> (0,896),
+<em>CIR1</em> (0,911), <em>STAT5B</em> (0,912), <em>IGF1</em> (0,910),
+<em>AURKA</em> (1,107), <em>FLT3</em> (0,923). A atenuação
+(<em>GSK3B</em> de 1,225 para 1,133) mostra que parte do efeito
+univariado é mediada pelo subtipo e pelo grau — mas não toda.</p>
+<p><strong>Alerta metodológico:</strong> entre os 20 genes mais fortes,
+<strong>12 violam o pressuposto de riscos proporcionais</strong>. Com
+seguimento mediano de quase 10 anos, os HR devem ser lidos como efeitos
+médios ao longo do seguimento, não como razões constantes.</p>
+<h3 id="onde-o-sinal-está-por-subtipo-e-por-estágio">6.4 Onde o sinal
+está — por subtipo e por estágio</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Subtipo</th>
+<th>n / eventos</th>
+<th>Genes significativos</th>
+<th></th>
+<th>Estágio</th>
+<th>n / eventos</th>
+<th>Genes significativos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>LumA</strong></td>
+<td>679 / 364</td>
+<td><strong>12 de 12</strong></td>
+<td></td>
+<td>I</td>
+<td>479 / 216</td>
+<td><strong>1</strong> (<em>NRIP1</em> 0,729)</td>
+</tr>
+<tr class="even">
+<td>LumB</td>
+<td>461 / 303</td>
+<td>4</td>
+<td></td>
+<td><strong>II</strong></td>
+<td>797 / 480</td>
+<td><strong>71</strong></td>
+</tr>
+<tr class="odd">
+<td>Normal</td>
+<td>140 / 76</td>
+<td>4</td>
+<td></td>
+<td>III–IV</td>
+<td>124 / 94</td>
+<td><strong>1</strong> (<em>DNAH11</em> 1,523)</td>
+</tr>
+<tr class="even">
+<td>claudin-low</td>
+<td>198 / 89</td>
+<td>0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Her2</strong></td>
+<td>220 / 155</td>
+<td><strong>0</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Basal</strong></td>
+<td>199 / 111</td>
+<td><strong>0</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>No estágio II destacam-se <em>ACVR1B</em> (1,279), <em>MEN1</em>
+(1,242), <em>MAML1</em> (1,236) e <em>AR</em> (1,217) como risco;
+<em>PDGFRA</em> (0,791), <em>STAT5A</em> (0,787), <em>IGF1</em> (0,762)
+e <em>CDKN2C</em> (0,777) como proteção.</p>
+<p><strong>A informação transcricional é útil onde existe
+heterogeneidade de risco a resolver.</strong> No estágio I o prognóstico
+já é bom para quase todas; no III–IV já é ruim para quase todas. É no
+estágio II — o maior e mais heterogêneo — que a expressão gênica
+efetivamente estratifica.</p>
+<h3 id="integração-o-eixo-dominante-é-a-proliferação">6.5 Integração: o
+eixo dominante é a proliferação</h3>
+<p>Cruzando marcadores de subtipo com genes prognósticos, 223 pares são
+simultaneamente as duas coisas. A simetria entre Basal e LumA — os
+mesmos genes (<em>AURKA</em>, <em>FANCD2</em>, <em>E2F2</em>,
+<em>BCL2</em>) com direções invertidas — indica que o eixo prognóstico
+dominante não é um conjunto de genes independentes, mas um
+<strong>gradiente único de proliferação</strong>. Isso explica por que a
+assinatura multigênica acrescenta tão pouco a um modelo que já contém
+subtipo e grau: ela mede, por um caminho mais longo e instável, algo que
+o grau histológico já mede.</p>
+<hr />
+<h2 id="resultados-aprendizado-de-máquina">7. Resultados — aprendizado
+de máquina</h2>
+<h3 id="classificação-dos-subtipos-moleculares">7.1 Classificação dos
+subtipos moleculares</h3>
+<p>Onze algoritmos, 5-fold × 3 repetições, a partir dos 489 genes:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Acurácia</th>
+<th>Acurácia balanceada</th>
+<th>F1-macro</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Gradient Boosting</strong></td>
+<td><strong>0,7872</strong></td>
+<td>0,7256</td>
+<td>0,7430</td>
+</tr>
+<tr class="even">
+<td>SVM RBF</td>
+<td>0,7760</td>
+<td>0,7241</td>
+<td>0,7385</td>
+</tr>
+<tr class="odd">
+<td>Random Forest</td>
+<td>0,7663</td>
+<td>0,6780</td>
+<td>0,7021</td>
+</tr>
+<tr class="even">
+<td>Rede neural (MLP)</td>
+<td>0,7591</td>
+<td>0,7166</td>
+<td>0,7266</td>
+</tr>
+<tr class="odd">
+<td>Regressão logística</td>
+<td>0,7582</td>
+<td>0,7183</td>
+<td>0,7265</td>
+</tr>
+<tr class="even">
+<td>Extra Trees</td>
+<td>0,7563</td>
+<td>0,6595</td>
+<td>0,6818</td>
+</tr>
+<tr class="odd">
+<td>LDA</td>
+<td>0,7412</td>
+<td>0,6895</td>
+<td>0,7044</td>
+</tr>
+<tr class="even">
+<td>SVM linear</td>
+<td>0,7401</td>
+<td>0,7107</td>
+<td>0,7127</td>
+</tr>
+<tr class="odd">
+<td>Naive Bayes</td>
+<td>0,7062</td>
+<td>0,6968</td>
+<td>0,6808</td>
+</tr>
+<tr class="even">
+<td>k-NN (k = 15)</td>
+<td>0,6375</td>
+<td>0,5584</td>
+<td>0,5923</td>
+</tr>
+<tr class="odd">
+<td>Baseline</td>
+<td>0,3579</td>
+<td>0,1667</td>
+<td>0,0879</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O ranking é real? Só em parte.</strong> Pelo t pareado
+corrigido de Nadeau-Bengio, o Gradient Boosting <strong>não é
+estatisticamente superior</strong> ao SVM RBF (p = 0,254) nem ao Random
+Forest (p = 0,095). McNemar sobre as 1.897 predições: 130 acertos
+exclusivos do primeiro contra 114 do segundo, χ² = 0,922, <strong>p =
+0,337</strong>. A vantagem de 1,1 ponto está dentro da flutuação
+amostral.</p>
+<p>São conclusões sólidas: todos superam massivamente o baseline; o k-NN
+é inadequado (maldição da dimensionalidade em 489 dimensões); e os
+modelos lineares ficam 3–5 pontos atrás dos não-lineares, indicando
+estrutura de interação entre genes.</p>
+<p><strong>Genes mais informativos:</strong> <em>GATA3</em>,
+<em>AURKA</em>, <em>EGFR</em>, <em>CDK1</em>, <em>CDC25A</em>,
+<em>MAPT</em>, <em>CHEK1</em>, <em>IGF1R</em>, <em>BCL2</em>,
+<em>E2F2</em>. O Random Forest, método multivariado e não-linear, chega
+aos mesmos genes que o limma identificou gene a gene.</p>
+<h3 id="predição-de-óbito-em-10-anos-os-16-modelos">7.2 Predição de
+óbito em 10 anos — os 16 modelos</h3>
+<p>Busca de hiperparâmetros aninhada, IC 95% de DeLong (figuras
+<code>F01</code>, <code>F02</code>):</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Conjunto</th>
+<th>Algoritmo</th>
+<th>Var.</th>
+<th>AUC</th>
+<th>IC 95%</th>
+<th>Brier cal.</th>
+<th>H-L p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Combinado</strong></td>
+<td><strong>XGBoost</strong></td>
+<td>500</td>
+<td><strong>0,7488</strong></td>
+<td>0,725–0,773</td>
+<td>0,198</td>
+<td>0,999</td>
+</tr>
+<tr class="even">
+<td>Clínico</td>
+<td>Rede neural (MLP)</td>
+<td>11</td>
+<td>0,7379</td>
+<td>0,713–0,762</td>
+<td>0,202</td>
+<td>0,95</td>
+</tr>
+<tr class="odd">
+<td>Clínico</td>
+<td>XGBoost</td>
+<td>11</td>
+<td>0,7352</td>
+<td>0,711–0,760</td>
+<td>0,203</td>
+<td>0,43</td>
+</tr>
+<tr class="even">
+<td>Clínico</td>
+<td>Random Forest</td>
+<td>11</td>
+<td>0,7334</td>
+<td>0,709–0,758</td>
+<td>0,203</td>
+<td>0,99</td>
+</tr>
+<tr class="odd">
+<td>Clínico</td>
+<td>Gradient Boosting</td>
+<td>11</td>
+<td>0,7328</td>
+<td>0,708–0,758</td>
+<td>0,204</td>
+<td>0,52</td>
+</tr>
+<tr class="even">
+<td>Combinado</td>
+<td>Extra Trees</td>
+<td>500</td>
+<td>0,7253</td>
+<td>0,701–0,750</td>
+<td>0,206</td>
+<td>0,998</td>
+</tr>
+<tr class="odd">
+<td>Clínico</td>
+<td>Regressão logística</td>
+<td>11</td>
+<td>0,7190</td>
+<td>0,694–0,744</td>
+<td>0,208</td>
+<td>0,65</td>
+</tr>
+<tr class="even">
+<td>Clínico</td>
+<td>Extra Trees</td>
+<td>11</td>
+<td>0,7182</td>
+<td>0,693–0,743</td>
+<td>0,208</td>
+<td>0,94</td>
+</tr>
+<tr class="odd">
+<td>Combinado</td>
+<td>Random Forest</td>
+<td>500</td>
+<td>0,7047</td>
+<td>0,679–0,730</td>
+<td>0,213</td>
+<td>0,84</td>
+</tr>
+<tr class="even">
+<td>Combinado</td>
+<td>Regressão logística</td>
+<td>500</td>
+<td>0,6914</td>
+<td>0,665–0,717</td>
+<td>0,217</td>
+<td>0,26</td>
+</tr>
+<tr class="odd">
+<td>Combinado</td>
+<td>Rede neural (MLP)</td>
+<td>500</td>
+<td>0,6702</td>
+<td>0,644–0,697</td>
+<td>0,224</td>
+<td>0,97</td>
+</tr>
+<tr class="even">
+<td>Genes</td>
+<td>XGBoost</td>
+<td>489</td>
+<td>0,6632</td>
+<td>0,636–0,690</td>
+<td>0,223</td>
+<td>0,99</td>
+</tr>
+<tr class="odd">
+<td>Genes</td>
+<td>Random Forest</td>
+<td>489</td>
+<td>0,6511</td>
+<td>0,624–0,678</td>
+<td>0,226</td>
+<td>0,88</td>
+</tr>
+<tr class="even">
+<td>Genes</td>
+<td>Extra Trees</td>
+<td>489</td>
+<td>0,6488</td>
+<td>0,622–0,676</td>
+<td>0,227</td>
+<td>0,996</td>
+</tr>
+<tr class="odd">
+<td>Genes</td>
+<td>Regressão logística</td>
+<td>489</td>
+<td>0,6314</td>
+<td>0,604–0,659</td>
+<td>0,231</td>
+<td>0,83</td>
+</tr>
+<tr class="even">
+<td>Genes</td>
+<td>Rede neural (MLP)</td>
+<td>489</td>
+<td>0,6194</td>
+<td>0,592–0,647</td>
+<td>0,234</td>
+<td>0,94</td>
+</tr>
+</tbody>
+</table>
+<h3 id="como-funciona-cada-algoritmo">7.3 Como funciona cada
+algoritmo</h3>
+<p><strong>Regressão logística.</strong> Fronteira linear: cada variável
+recebe um peso, os pesos são somados e a soma vira probabilidade pela
+função logística. É o modelo mais transparente e serve de referência: se
+um método complexo não a supera, a estrutura dos dados é essencialmente
+linear.</p>
+<p><strong>Random Forest.</strong> Centenas de árvores de decisão, cada
+uma treinada num reamostreio dos pacientes e enxergando apenas um
+sorteio das variáveis a cada divisão. A predição é a média. Essa dupla
+aleatoriedade descorrelaciona os erros: cada árvore erra de um jeito
+diferente e a média cancela boa parte do ruído.</p>
+<p><strong>Extra Trees.</strong> Variante em que os pontos de corte são
+sorteados em vez de otimizados. Mais aleatoriedade aumenta o viés de
+cada árvore mas reduz ainda mais a variância do conjunto — por isso é o
+segundo melhor no conjunto combinado, com 489 variáveis de sinal
+fraco.</p>
+<p><strong>Gradient Boosting.</strong> As árvores são construídas em
+sequência: cada nova árvore corrige o erro residual das anteriores e
+entra com peso pequeno (taxa de aprendizado). Ganha precisão, mas é mais
+sensível a sobreajuste que a floresta.</p>
+<p><strong>XGBoost.</strong> Gradient boosting com freios: regularização
+explícita dos pesos das folhas, poda por ganho mínimo, amostragem de
+linhas e colunas a cada rodada e busca de cortes por histograma. É o que
+permite rodar boosting em 500 colunas sem decorar o treino — e por isso
+lidera.</p>
+<p><strong>Rede neural (MLP).</strong> Camada oculta com ativação
+não-linear e saída logística, aprendendo combinações que nenhuma
+variável expressa isoladamente. Lidera no conjunto clínico e é a
+<strong>pior</strong> nos genes: com 489 entradas e 1.560 casos, decora
+em vez de generalizar.</p>
+<h3 id="a-expressão-gênica-perde-para-6-variáveis-clínicas">7.4 A
+expressão gênica perde para 6 variáveis clínicas</h3>
+<p>Comparação pareada genes × clínico <strong>dentro de cada
+algoritmo</strong> (t de Nadeau-Bengio, correção FDR):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Algoritmo</th>
+<th>AUC genes</th>
+<th>AUC clínico</th>
+<th>Diferença</th>
+<th>FDR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rede neural (MLP)</td>
+<td>0,614</td>
+<td>0,736</td>
+<td>−0,122</td>
+<td>0,0003</td>
+</tr>
+<tr class="even">
+<td>k-NN</td>
+<td>0,602</td>
+<td>0,714</td>
+<td>−0,112</td>
+<td>0,0003</td>
+</tr>
+<tr class="odd">
+<td>Regressão logística</td>
+<td>0,604</td>
+<td>0,717</td>
+<td>−0,112</td>
+<td>0,0003</td>
+</tr>
+<tr class="even">
+<td>SVM linear</td>
+<td>0,606</td>
+<td>0,715</td>
+<td>−0,109</td>
+<td>0,0005</td>
+</tr>
+<tr class="odd">
+<td>LDA</td>
+<td>0,607</td>
+<td>0,715</td>
+<td>−0,109</td>
+<td>0,0005</td>
+</tr>
+<tr class="even">
+<td>SVM RBF</td>
+<td>0,655</td>
+<td>0,727</td>
+<td>−0,072</td>
+<td>0,0021</td>
+</tr>
+<tr class="odd">
+<td>Extra Trees</td>
+<td>0,651</td>
+<td>0,721</td>
+<td>−0,070</td>
+<td>0,0005</td>
+</tr>
+<tr class="even">
+<td>Random Forest</td>
+<td>0,656</td>
+<td>0,726</td>
+<td>−0,070</td>
+<td>0,0016</td>
+</tr>
+<tr class="odd">
+<td>Naive Bayes</td>
+<td>0,630</td>
+<td>0,693</td>
+<td>−0,064</td>
+<td>0,0011</td>
+</tr>
+<tr class="even">
+<td>Gradient Boosting</td>
+<td>0,638</td>
+<td>0,700</td>
+<td>−0,061</td>
+<td>0,0025</td>
+</tr>
+<tr class="odd">
+<td>Regressão logística LASSO</td>
+<td>0,654</td>
+<td>0,714</td>
+<td>−0,060</td>
+<td>0,0006</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Onze de onze algoritmos, todos com FDR &lt; 0,003, na mesma
+direção.</strong> Não existe interpretação alternativa: a desvantagem
+dos 489 genes frente a 6 variáveis clínicas não é artefato de escolha de
+modelo, de linearidade, de regularização ou de hiperparâmetro. É
+propriedade dos dados.</p>
+<p><strong>Qualificação importante.</strong> O XGBoost sobre o conjunto
+combinado (0,7488) é o <strong>único</strong> modelo a superar o melhor
+puramente clínico. Isso qualifica — sem anular — a conclusão acima: a
+regressão logística não extraía nada dos genes além do clínico, mas um
+método capaz de capturar interações extrai <strong>algum</strong> sinal.
+Duas ressalvas: o IC se sobrepõe amplamente ao do MLP clínico, e o ganho
+custa 489 variáveis adicionais.</p>
+<h3 id="a-assinatura-multigênica-que-não-funcionou">7.5 A assinatura
+multigênica que não funcionou</h3>
+<p>O LASSO-Cox selecionou 65 genes em <code>lambda.min</code> e 12 em
+<code>lambda.1se</code>. Em 25 partições independentes:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>C-index médio</th>
+<th>DP</th>
+<th>Mín</th>
+<th>Máx</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Assinatura gênica</td>
+<td>0,5549</td>
+<td>0,0354</td>
+<td>0,500</td>
+<td>0,611</td>
+</tr>
+<tr class="even">
+<td>Clínico</td>
+<td>0,6553</td>
+<td>0,0139</td>
+<td>0,627</td>
+<td>0,689</td>
+</tr>
+<tr class="odd">
+<td>Combinado</td>
+<td>0,6556</td>
+<td>0,0142</td>
+<td>0,634</td>
+<td>0,691</td>
+</tr>
+</tbody>
+</table>
+<p>Comparações pareadas (Wilcoxon): combinado <em>vs.</em> clínico →
++0,0003, <strong>p = 0,70</strong>; assinatura <em>vs.</em> clínico →
+−0,1004, <strong>p = 6 × 10⁻⁸</strong>.</p>
+<p>Na amostra de derivação, o teste de razão de verossimilhança sugeria
+ganho espetacular (χ² = 161,5; p = 5,3 × 10⁻³⁷). Fora da amostra, esse
+ganho <strong>desaparece por completo</strong> — a assinatura digital do
+sobreajuste. Relatar apenas o valor-p intra-amostral produziria a
+conclusão oposta e falsa.</p>
+<p><strong>Estabilidade de seleção:</strong> apenas quatro genes foram
+escolhidos com consistência — <em>GSK3B</em> (72%), <em>STAT5A</em>
+(60%), <em>FLT3</em> (32%), <em>SPRY2</em> (32%); todos os demais em ≤
+12%.</p>
+<h3 id="calibração-discriminação-e-calibração-são-coisas-distintas">7.6
+Calibração — discriminação e calibração são coisas distintas</h3>
+<p>Antes da correção isotônica, o modelo atribuía 6,8% de risco a um
+grupo onde morriam 25,1%: <strong>Hosmer-Lemeshow χ² = 779,4; p = 5,7 ×
+10⁻¹⁶³</strong>. Depois da correção ajustada dentro da validação (figura
+<code>F03</code>):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Brier</th>
+<th>Hosmer-Lemeshow</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Clínico</td>
+<td>0,211</td>
+<td><strong>p = 0,66</strong></td>
+</tr>
+<tr class="even">
+<td>Genes</td>
+<td>0,233</td>
+<td>p = 0,25</td>
+</tr>
+<tr class="odd">
+<td>Combinado</td>
+<td>0,223</td>
+<td>p = 0,20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A ordenação de risco, essa sim, sempre funcionou</strong>
+(figura <code>F05</code>):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Tercil</th>
+<th>n</th>
+<th>Óbitos em 10 anos</th>
+<th>Sobrevida global mediana</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Baixo</td>
+<td>535</td>
+<td>26,2%</td>
+<td>217,6 meses</td>
+</tr>
+<tr class="even">
+<td>Médio</td>
+<td>505</td>
+<td>45,7%</td>
+<td>142,4 meses</td>
+</tr>
+<tr class="odd">
+<td>Alto</td>
+<td>520</td>
+<td>63,6%</td>
+<td>85,7 meses</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Log-rank p = 1,8 × 10⁻³⁶</strong> — 132 meses de diferença
+entre os extremos.</p>
+<hr />
+<h2 id="resultados-onde-o-modelo-falha">8. Resultados — onde o modelo
+falha</h2>
+<h3 id="a-falha-do-classificador-é-do-rótulo">8.1 A falha do
+classificador é do rótulo</h3>
+<p>Matriz de confusão (figura <code>F08</code>), recall por classe: LumA
+0,872 · LumB 0,818 · Basal 0,784 · claudin-low 0,788 · Her2 0,723 ·
+<strong>Normal 0,350</strong>.</p>
+<p>Qui-quadrado entre subtipo real e acerto: <strong>χ² = 195,3; p = 2,9
+× 10⁻⁴⁰</strong> — o erro não é aleatório.</p>
+<p><strong>O erro tem uma geometria.</strong> Todos os erros relevantes
+ocorrem entre pares <strong>biologicamente adjacentes</strong>: LumA ↔︎
+LumB (124 erros), Normal → LumA (67), Her2 → LumB/LumA (50), claudin-low
+→ Basal (20). O que praticamente <strong>não</strong> acontece é
+igualmente informativo: apenas 5 casos Basal foram chamados de LumA.
+<strong>O modelo nunca confunde os extremos do espectro.</strong></p>
+<p><strong>Duas evidências de que a falha é do rótulo:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Variável</th>
+<th>Teste</th>
+<th>FDR</th>
+<th>Associada ao erro?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Celularidade</strong></td>
+<td>qui-quadrado</td>
+<td><strong>0,0111</strong></td>
+<td><strong>sim</strong></td>
+</tr>
+<tr class="even">
+<td><strong>Integrative cluster</strong></td>
+<td>qui-quadrado</td>
+<td><strong>0,0003</strong></td>
+<td><strong>sim</strong></td>
+</tr>
+<tr class="odd">
+<td>Status de ER</td>
+<td>qui-quadrado</td>
+<td>0,064</td>
+<td>limítrofe</td>
+</tr>
+<tr class="even">
+<td>Tamanho tumoral</td>
+<td>Mann-Whitney</td>
+<td>0,137</td>
+<td>não</td>
+</tr>
+<tr class="odd">
+<td>Grau histológico</td>
+<td>qui-quadrado</td>
+<td>0,620</td>
+<td>não</td>
+</tr>
+<tr class="even">
+<td>Status HER2</td>
+<td>qui-quadrado</td>
+<td>1,000</td>
+<td>não</td>
+</tr>
+<tr class="odd">
+<td>Idade</td>
+<td>Mann-Whitney</td>
+<td>0,701</td>
+<td>não</td>
+</tr>
+<tr class="even">
+<td>Carga mutacional</td>
+<td>Mann-Whitney</td>
+<td>0,701</td>
+<td>não</td>
+</tr>
+</tbody>
+</table>
+<p>Taxa de acerto por celularidade: <strong>alta 82,1% → moderada 76,6%
+→ baixa 72,7%</strong>. Quanto menor a fração de células tumorais, maior
+a contaminação por tecido normal. <strong>O modelo não está errando o
+cálculo — está recebendo, em parte, o transcriptoma do tecido
+errado.</strong></p>
+<h3 id="o-modelo-sabe-quando-não-sabe">8.2 O modelo sabe quando não
+sabe</h3>
+<p>Confiança mediana nos acertos: <strong>0,581</strong>; nos erros:
+<strong>0,442</strong> — Mann-Whitney <strong>p = 4,2 ×
+10⁻⁶⁰</strong>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Faixa de confiança</th>
+<th>n</th>
+<th>Acerto observado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>≤ 0,4</td>
+<td>324</td>
+<td><strong>47,5%</strong></td>
+</tr>
+<tr class="even">
+<td>0,4 – 0,5</td>
+<td>449</td>
+<td>68,6%</td>
+</tr>
+<tr class="odd">
+<td>0,5 – 0,6</td>
+<td>414</td>
+<td>79,0%</td>
+</tr>
+<tr class="even">
+<td>0,6 – 0,7</td>
+<td>350</td>
+<td>89,7%</td>
+</tr>
+<tr class="odd">
+<td>0,7 – 0,8</td>
+<td>239</td>
+<td>94,6%</td>
+</tr>
+<tr class="even">
+<td>0,8 – 0,9</td>
+<td>106</td>
+<td>98,1%</td>
+</tr>
+<tr class="odd">
+<td>&gt; 0,9</td>
+<td>15</td>
+<td><strong>100,0%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Isso habilita uma estratégia operacional: classificar automaticamente
+os casos com confiança acima de 0,7 e encaminhar à revisão os 324 casos
+abaixo de 0,4, onde o modelo acerta pouco mais que uma moeda.</p>
+<h3 id="onde-a-predição-de-sobrevida-não-é-confiável">8.3 Onde a
+predição de sobrevida não é confiável</h3>
+<p>AUC por estrato com IC 95% bootstrap (figura <code>F04</code>):</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Estrato</th>
+<th>n</th>
+<th>Eventos</th>
+<th>AUC</th>
+<th>IC 95%</th>
+<th>Veredito</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normal-like</td>
+<td>111</td>
+<td>52</td>
+<td>0,719</td>
+<td>0,613–0,813</td>
+<td>confiável</td>
+</tr>
+<tr class="even">
+<td>claudin-low</td>
+<td>150</td>
+<td>59</td>
+<td>0,714</td>
+<td>0,621–0,793</td>
+<td>confiável</td>
+</tr>
+<tr class="odd">
+<td>LumA</td>
+<td>544</td>
+<td>183</td>
+<td>0,678</td>
+<td>0,630–0,727</td>
+<td>confiável</td>
+</tr>
+<tr class="even">
+<td>LumB</td>
+<td>394</td>
+<td>204</td>
+<td>0,661</td>
+<td>0,608–0,717</td>
+<td>confiável</td>
+</tr>
+<tr class="odd">
+<td>Her2</td>
+<td>184</td>
+<td>109</td>
+<td>0,608</td>
+<td>0,522–0,688</td>
+<td>limítrofe</td>
+</tr>
+<tr class="even">
+<td><strong>Basal</strong></td>
+<td>177</td>
+<td>95</td>
+<td><strong>0,577</strong></td>
+<td><strong>0,491–0,659</strong></td>
+<td><strong>não confiável</strong></td>
+</tr>
+<tr class="odd">
+<td>Estágio I</td>
+<td>390</td>
+<td>113</td>
+<td>0,651</td>
+<td>0,591–0,710</td>
+<td>confiável</td>
+</tr>
+<tr class="even">
+<td>Estágio II</td>
+<td>668</td>
+<td>324</td>
+<td>0,643</td>
+<td>0,599–0,685</td>
+<td>confiável</td>
+</tr>
+<tr class="odd">
+<td><strong>Estágio III–IV</strong></td>
+<td>109</td>
+<td>78</td>
+<td><strong>0,506</strong></td>
+<td><strong>0,387–0,626</strong></td>
+<td><strong>não confiável</strong></td>
+</tr>
+</tbody>
+</table>
+<p>No subtipo Basal e no estágio III–IV o intervalo cruza 0,5: a
+predição não se distingue de um sorteio. A plataforma <strong>bloqueia a
+leitura do número</strong> nesses casos.</p>
+<h3 id="o-erro-que-mais-importa">8.4 O erro que mais importa</h3>
+<p>O modelo erra assimetricamente: 302 falsos positivos contra 224
+falsos negativos (teste binomial <strong>p = 0,0008</strong>). Em
+estratificação de risco, esse é o viés menos danoso.</p>
+<p>Comparando os óbitos <strong>não previstos</strong> com os
+<strong>previstos</strong> (Mann-Whitney, todos FDR &lt; 0,001):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Variável</th>
+<th>Óbito não previsto</th>
+<th>Óbito previsto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Idade ao diagnóstico</td>
+<td>61,3 anos</td>
+<td>69,1 anos</td>
+</tr>
+<tr class="even">
+<td>Tamanho tumoral</td>
+<td>20 mm</td>
+<td>30 mm</td>
+</tr>
+<tr class="odd">
+<td>Índice de Nottingham</td>
+<td>4,04</td>
+<td>5,04</td>
+</tr>
+<tr class="even">
+<td>Linfonodos positivos</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>Tempo até o óbito</td>
+<td>70,1 meses</td>
+<td>46,0 meses</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Os óbitos que o modelo não antecipa são de pacientes mais
+jovens, com tumores menores, sem linfonodos comprometidos e índice
+prognóstico favorável.</strong> O modelo captura bem a morte que
+“parece” provável pelos critérios clínicos clássicos e falha justamente
+nos casos que mais precisariam de um marcador molecular. Esse é o nicho
+não atendido, e ele coincide exatamente com o resultado de que os genes
+não acrescentam sinal — se acrescentassem, seria aqui.</p>
+<hr />
+<h2 id="camada-farmacogenômica">9. Camada farmacogenômica</h2>
+<p>Para cada um dos 489 genes e cada um dos três tratamentos
+registrados, foi ajustado um modelo de Cox contendo o gene, o tratamento
+e o <strong>termo de interação gene × tratamento</strong> (1.467
+modelos), com ajuste por idade, grau e tamanho tumoral.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Tratamento</th>
+<th>n (tratadas / não tratadas)</th>
+<th>Interações com FDR &lt; 0,05</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Hormonioterapia</strong></td>
+<td>1.170 / 727</td>
+<td><strong>14</strong></td>
+</tr>
+<tr class="even">
+<td>Quimioterapia</td>
+<td>396 / 1.501</td>
+<td>0 (menor FDR: <em>AKT1S1</em>, 0,071)</td>
+</tr>
+<tr class="odd">
+<td>Radioterapia</td>
+<td>1.137 / 760</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="os-14-genes-com-interação-significativa">Os 14 genes com
+interação significativa</h3>
+<p>O HR de referência é o efeito do gene em quem <strong>não</strong>
+recebeu hormonioterapia; o HR de interação é o fator multiplicativo
+aplicado a quem recebeu.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Gene</th>
+<th>HR sem terapia</th>
+<th>HR de interação</th>
+<th>FDR</th>
+<th>Efeito resultante</th>
+<th>Leitura</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>EIF4E</strong></td>
+<td>1,184</td>
+<td>0,762</td>
+<td>0,012</td>
+<td>≈ 0,90</td>
+<td>risco anulado sob terapia</td>
+</tr>
+<tr class="even">
+<td><strong>TWIST1</strong></td>
+<td>1,205</td>
+<td>0,779</td>
+<td>0,013</td>
+<td>≈ 0,94</td>
+<td>risco anulado</td>
+</tr>
+<tr class="odd">
+<td><strong>DNAH2</strong></td>
+<td>0,802</td>
+<td>1,294</td>
+<td>0,013</td>
+<td>≈ 1,04</td>
+<td>proteção anulada</td>
+</tr>
+<tr class="even">
+<td><strong>SETDB1</strong></td>
+<td>0,881</td>
+<td>1,275</td>
+<td>0,017</td>
+<td>≈ 1,12</td>
+<td>proteção invertida</td>
+</tr>
+<tr class="odd">
+<td><strong>PDGFRA</strong></td>
+<td>1,148</td>
+<td>0,784</td>
+<td>0,022</td>
+<td>≈ 0,90</td>
+<td>risco anulado</td>
+</tr>
+<tr class="even">
+<td><strong>EPCAM</strong></td>
+<td>1,139</td>
+<td>0,789</td>
+<td>0,023</td>
+<td>≈ 0,90</td>
+<td>risco anulado</td>
+</tr>
+<tr class="odd">
+<td><strong>MYC</strong></td>
+<td>1,139</td>
+<td>0,804</td>
+<td>0,030</td>
+<td>≈ 0,92</td>
+<td>risco anulado</td>
+</tr>
+<tr class="even">
+<td><strong>MTOR</strong></td>
+<td>0,891</td>
+<td>1,243</td>
+<td>0,030</td>
+<td>≈ 1,11</td>
+<td>proteção invertida</td>
+</tr>
+<tr class="odd">
+<td><strong>MAP3K13</strong></td>
+<td>0,931</td>
+<td>1,238</td>
+<td>0,030</td>
+<td>≈ 1,15</td>
+<td>proteção invertida</td>
+</tr>
+<tr class="even">
+<td><strong>ACKR3</strong></td>
+<td>1,209</td>
+<td>0,801</td>
+<td>0,031</td>
+<td>≈ 0,97</td>
+<td>risco anulado</td>
+</tr>
+<tr class="odd">
+<td><strong>BAP1</strong></td>
+<td>0,870</td>
+<td>1,230</td>
+<td>0,032</td>
+<td>≈ 1,07</td>
+<td>proteção invertida</td>
+</tr>
+<tr class="even">
+<td><strong>DTX3</strong></td>
+<td>0,869</td>
+<td>1,213</td>
+<td>0,034</td>
+<td>≈ 1,05</td>
+<td>proteção invertida</td>
+</tr>
+<tr class="odd">
+<td><strong>CASP6</strong></td>
+<td>1,108</td>
+<td>0,809</td>
+<td>0,034</td>
+<td>≈ 0,90</td>
+<td>risco anulado</td>
+</tr>
+<tr class="even">
+<td><strong>MMP16</strong></td>
+<td>1,176</td>
+<td>0,811</td>
+<td>0,042</td>
+<td>≈ 0,95</td>
+<td>risco anulado</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Teste de confundimento — a verificação decisiva.</strong> A
+hormonioterapia é prescrita conforme o status de receptor de estrogênio,
+então uma “interação” poderia refletir apenas a diferença entre
+biologias ER+ e ER−. Reanalisando com ajuste adicional por
+<strong>status de ER, subtipo molecular e quimioterapia</strong>, os 14
+permaneceram significativos (FDR entre 0,0009 e 0,013), com HR
+praticamente inalterados (<em>EIF4E</em> 0,762 → 0,790; <em>MYC</em>
+0,804 → 0,794; <em>MTOR</em> 1,243 → 1,223).</p>
+<p><strong>Interpretação.</strong> Emergem dois grupos coerentes com a
+biologia da resistência endócrina:</p>
+<ul>
+<li>Genes de <strong>tradução, proliferação e transição
+epitélio-mesenquimal</strong> (<em>EIF4E</em>, <em>MYC</em>,
+<em>TWIST1</em>, <em>EPCAM</em>, <em>PDGFRA</em>, <em>MMP16</em>,
+<em>ACKR3</em>): alta expressão marca pior prognóstico em pacientes não
+tratadas, e a desvantagem desaparece sob terapia — compatível com esses
+tumores serem os que mais se beneficiam do bloqueio endócrino.</li>
+<li>Genes de <strong>remodelamento de cromatina e sinalização
+mTOR</strong> (<em>MTOR</em>, <em>SETDB1</em>, <em>MAP3K13</em>,
+<em>BAP1</em>, <em>DTX3</em>): alta expressão é neutra ou favorável sem
+terapia e passa a marcar <strong>pior</strong> desfecho sob
+hormonioterapia — perfil candidato a <strong>resistência
+endócrina</strong>, biologicamente plausível dado que a via
+PI3K/AKT/mTOR é o mecanismo de escape endócrino mais estabelecido no
+luminal.</li>
+</ul>
+<p><strong>Nomenclatura.</strong> Trata-se de farmacogenômica
+<strong>somática</strong> — expressão tumoral como modificadora de
+efeito do tratamento — e não da farmacogenômica clássica de
+polimorfismos germinativos (<em>CYP2D6</em>, <em>DPYD</em>,
+<em>UGT1A1</em>), para a qual o METABRIC não tem dados.</p>
+<hr />
+<h2 id="plataforma-de-inferência">10. Plataforma de inferência</h2>
+<p>Aplicação estática de página única, com todo o cálculo no navegador —
+nenhum dado do usuário trafega pela rede. Os 16 modelos foram exportados
+como coeficientes e arrays compactos de nós de árvore, e a predição
+reimplementada em JavaScript puro.</p>
+<h3
+id="algoritmo-de-inferência-para-reimplementar-em-qualquer-linguagem">Algoritmo
+de inferência (para reimplementar em qualquer linguagem)</h3>
+<pre><code>1. Monte o vetor x na ordem exata de modelo[&quot;variaveis&quot;]:
+   - nomes iniciados por &quot;sub_&quot;  → 1 se for o subtipo do paciente, 0 caso contrário
+   - variáveis clínicas          → o valor informado (NUNCA zero quando ausente)
+   - demais nomes                → o z-score do gene (0 = média da coorte)
+
+2. Conforme modelo[&quot;tipo&quot;]:
+   linear        z = intercepto + Σ ((x[i] − media[i]) / escala[i]) × coef[i];  p = sigmoide(z)
+   floresta      p = média, sobre as árvores, do valor da folha alcançada
+   boosting_sk   z = base + lr × Σ (folha de cada árvore);      p = sigmoide(z)
+   boosting_xgb  z = logit(base) + Σ (folha de cada árvore);    p = sigmoide(z)
+   mlp           padronize; aplique W/b com ReLU camada a camada; saída logística
+
+   Percurso da árvore: comece no nó 0; enquanto l[i] ≠ −1, vá para l[i] se x[f[i]] &lt; t[i],
+   senão para r[i]. Devolva v[i].
+   ATENÇÃO: a folha é identificada por l[i] = −1. No sklearn, f[i] vale −2 nas folhas.
+
+3. Calibre: interpole linearmente o p bruto na curva modelo[&quot;calibracao&quot;].</code></pre>
+<p>Para o <strong>XGBoost</strong>, <code>base</code> é a prevalência
+real (≈ 0,45), lida de <code>booster.save_config()</code>.</p>
+<h3 id="decisões-de-projeto-derivadas-da-análise">Decisões de projeto
+derivadas da análise</h3>
+<ul>
+<li><strong>Estados de indisponibilidade explícitos.</strong> Sem
+expressão carregada ou com campo clínico em branco, a tela mostra
+“Aguardando dados” e explica o que falta — em vez de calcular sobre um
+paciente médio inexistente. Campo em branco nunca vira zero.</li>
+<li><strong>O painel de confiabilidade é o elemento central</strong>,
+não o número do risco. Exibe a barra de AUC com IC 95% por subtipo, com
+a linha do acaso marcada, e emite veredito explícito. Em Basal, a
+mensagem é literal: ignore o número acima.</li>
+<li><strong>Seletor de conjunto e de algoritmo</strong>, com AUC e IC
+visíveis no momento da escolha, e curvas ROC sobrepostas.</li>
+<li><strong>O classificador de subtipo informa a própria
+confiança</strong> e avisa abaixo de 0,6.</li>
+</ul>
+<hr />
+<h2 id="erros-cometidos-e-corrigidos">11. Erros cometidos e
+corrigidos</h2>
+<p>Registro explícito, porque cada um afetaria as conclusões:</p>
+<p><strong>1. Vazamento de seleção de variáveis.</strong> A primeira
+versão da exportação selecionava a assinatura de 106 genes usando toda a
+base e só depois validava. Efeito:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Métrica</th>
+<th>Com vazamento</th>
+<th>Corrigido</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AUC do modelo de genes</td>
+<td>0,727</td>
+<td><strong>0,639</strong></td>
+</tr>
+<tr class="even">
+<td>AUC do modelo combinado</td>
+<td>0,768</td>
+<td><strong>0,692</strong></td>
+</tr>
+<tr class="odd">
+<td>Basal</td>
+<td>0,710 → “confiável”</td>
+<td><strong>0,577 (IC 0,491–0,659) → não confiável</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Se tivesse passado, a plataforma declararia confiável justamente a
+predição em tumores basais.</p>
+<p><strong>2. Laço infinito na travessia de árvores.</strong> As folhas
+do sklearn usam <code>feature = −2</code>, não <code>−1</code>; o teste
+de parada nunca disparava. Diagnosticado com <code>py-spy</code> após 13
+minutos de processo travado. A condição correta é
+<code>children_left == −1</code>.</p>
+<p><strong>3. XGBoost com erro de 4,8 × 10⁻² na
+reimplementação.</strong> O <code>base_score</code> real é a prevalência
+(≈ 0,45), não 0,5, e os limiares precisam da precisão de float32 do
+booster. Após corrigir ambos, o erro caiu para 8,4 × 10⁻⁸.</p>
+<p><strong>4. Sete incoerências na interface auditada.</strong> Modelo
+padrão contradizendo a própria nota da tela; veredito de confiabilidade
+de um modelo exibido para outro; predição de 40,4% exibida sem dado
+algum carregado; campo clínico vazio virando zero (risco caía de 40,3%
+para 15,7%); subtipo indefinido caindo silenciosamente em LumA;
+afirmação falsa sobre “106 genes + PAM50”; e perda da CSP restritiva na
+migração. Todas corrigidas na versão final.</p>
+<hr />
+<h2 id="limitações">12. Limitações</h2>
+<ol type="1">
+<li><strong>Sem validação externa.</strong> Toda a validação foi
+interna. Confirmação em TCGA-BRCA ou coorte própria é o passo
+obrigatório seguinte.</li>
+<li><strong>Cobertura gênica parcial:</strong> 489 genes de painel
+curado, não o transcriptoma completo.</li>
+<li><strong>Riscos proporcionais violados</strong> em 12 dos 20 genes
+mais fortes.</li>
+<li><strong>Coorte histórica</strong>, majoritariamente
+pré-trastuzumabe, com esquemas adjuvantes heterogêneos e sem registro de
+duração ou adesão à hormonioterapia.</li>
+<li><strong>Tratamento não randomizado:</strong> interação gene ×
+tratamento em dados observacionais é vulnerável a confundimento por
+indicação.</li>
+<li><strong>Estágio ausente em 26,2%</strong> e apenas 124 casos em
+III–IV.</li>
+<li><strong>Mortalidade competitiva:</strong> a OS inclui 480 óbitos por
+outras causas; o tratamento formal exigiria modelos de risco competitivo
+(Fine-Gray).</li>
+<li><strong>Grupo “Normal-like”</strong> provavelmente reflete
+contaminação por tecido normal.</li>
+<li><strong>z-scores calculados sobre a coorte inteira:</strong> aplicar
+a uma paciente nova exige recalibração.</li>
+<li><strong>Sem dados de genótipo germinativo:</strong> a camada
+farmacogenômica é somática, não clássica.</li>
+<li><strong>Discriminação moderada (≈ 0,75)</strong>, comparável ao que
+o estadiamento clínico já entrega.</li>
+</ol>
+<hr />
+<h2 id="próximos-passos">13. Próximos passos</h2>
+<p>Em ordem de retorno esperado:</p>
+<ol type="1">
+<li><strong>Restringir aos tumores luminais em estágio II</strong> e
+rederivar a assinatura nesse contexto — é onde todo o sinal se
+concentra.</li>
+<li><strong>Validar externamente</strong> em TCGA-BRCA, com atenção à
+diferença de plataforma (microarranjo vs. RNA-seq).</li>
+<li><strong>Aprofundar o eixo mTOR/<em>SETDB1</em></strong> como
+marcador de resistência endócrina, cruzando com as mutações de
+<em>PIK3CA</em> já disponíveis nesta coorte.</li>
+<li><strong>Obter a matriz de expressão completa</strong> (~24.000
+genes) e repetir os módulos de expressão diferencial, Cox e
+assinatura.</li>
+<li><strong>Modelos de risco competitivo</strong> (Fine-Gray) e
+<strong>Random Survival Forest</strong>, que usa o tempo até o evento em
+vez de dicotomizar em 10 anos.</li>
+<li><strong>Modelagem tempo-dependente</strong> para os genes que violam
+riscos proporcionais.</li>
+</ol>
+<hr />
+<h2 id="inventário-do-pacote">14. Inventário do pacote</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>00_dados_entrada/</code></td>
+<td><code>METABRIC_RNA_Mutation.csv</code> (8,4 MB) e
+<code>MD5SUM.txt</code></td>
+</tr>
+<tr class="even">
+<td><code>01_pipeline_R/</code></td>
+<td><code>metabric_pipeline.R</code> — 12 módulos, autossuficiente</td>
+</tr>
+<tr class="odd">
+<td><code>02_analises_complementares/</code></td>
+<td>Estágio, farmacogenômica, Random Forest complementar (Python)</td>
+</tr>
+<tr class="even">
+<td><code>03_benchmark_ml/</code></td>
+<td>Benchmark de 11 algoritmos com testes estatísticos (Python)</td>
+</tr>
+<tr class="odd">
+<td><code>04_treino_e_exportacao/</code></td>
+<td>Treino dos 16 modelos e exportação para o navegador (Python)</td>
+</tr>
+<tr class="even">
+<td><code>05_figuras/</code></td>
+<td>8 figuras de validação + script gerador</td>
+</tr>
+<tr class="odd">
+<td><code>06_tabelas/</code></td>
+<td>Genes de sobrevida (G01–G03) e métricas dos 16 modelos (G04)</td>
+</tr>
+<tr class="even">
+<td><code>07_plataforma/</code></td>
+<td>Aplicação web de inferência — abra <code>index.html</code></td>
+</tr>
+<tr class="odd">
+<td><code>08_resultados_brutos/</code></td>
+<td>33 tabelas do R, 13 figuras do R, todas as saídas
+intermediárias</td>
+</tr>
+<tr class="even">
+<td><code>09_relatorios/</code></td>
+<td>Este relatório e os relatórios temáticos anteriores</td>
+</tr>
+<tr class="odd">
+<td><code>EXECUTAR_TUDO.sh</code></td>
+<td>Executa o pipeline completo na ordem correta</td>
+</tr>
+<tr class="even">
+<td><code>requisitos.txt</code></td>
+<td>Dependências de Python e R</td>
+</tr>
+</tbody>
+</table>
+<h3 id="figuras-de-validação">Figuras de validação</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Figura</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>F01_curvas_roc.png</code></td>
+<td>Curvas ROC dos 6 algoritmos, nos 3 conjuntos</td>
+</tr>
+<tr class="even">
+<td><code>F02_auc_ic95.png</code></td>
+<td>AUC com IC 95% de DeLong para os 16 modelos</td>
+</tr>
+<tr class="odd">
+<td><code>F03_calibracao.png</code></td>
+<td>Risco previsto × observado após correção isotônica</td>
+</tr>
+<tr class="even">
+<td><code>F04_confiabilidade_estratos.png</code></td>
+<td>AUC por subtipo e estágio, com linha do acaso</td>
+</tr>
+<tr class="odd">
+<td><code>F05_tercis_risco.png</code></td>
+<td>Desfecho e sobrevida real por tercil</td>
+</tr>
+<tr class="even">
+<td><code>F06_genes_forest.png</code></td>
+<td>Forest plot dos 24 genes mais fortes</td>
+</tr>
+<tr class="odd">
+<td><code>F07_genes_ml_e_estagio.png</code></td>
+<td>Importância no Random Forest e genes do estágio II</td>
+</tr>
+<tr class="even">
+<td><code>F08_matriz_confusao_subtipo.png</code></td>
+<td>Matriz de confusão dos 6 subtipos</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bibliotecas-e-finalidade">Bibliotecas e finalidade</h3>
+<p><strong>R:</strong> data.table (leitura de alto desempenho),
+dplyr/tidyr/purrr/stringr/forcats (manipulação), <strong>limma</strong>
+(expressão diferencial com moderação bayesiana empírica),
+<strong>survival</strong> (Kaplan-Meier, log-rank, Cox,
+<code>cox.zph</code>), survminer (curvas com tabela de risco),
+<strong>glmnet</strong> (Cox penalizado por LASSO),
+<strong>randomForest</strong> (classificação multiclasse), matrixStats,
+broom, ggplot2, ggrepel, scales, RColorBrewer, viridis, pheatmap,
+patchwork, cowplot, gridExtra.</p>
+<p><strong>Python:</strong> <strong>scikit-learn</strong> (Random
+Forest, Extra Trees, Gradient Boosting, MLP, SVM, validação cruzada,
+calibração isotônica, métricas), <strong>XGBoost</strong> (boosting
+regularizado), <strong>lifelines</strong> (modelos de Cox, Kaplan-Meier,
+log-rank), statsmodels (Benjamini-Hochberg, McNemar), scipy (testes
+estatísticos), pandas/numpy, matplotlib (figuras).</p>
+<hr />
+<h2 id="referências">15. Referências</h2>
+<ul>
+<li>Curtis C, Shah SP, Chin SF, et al. The genomic and transcriptomic
+architecture of 2,000 breast tumours reveals novel subgroups.
+<em>Nature</em>. 2012;486(7403):346-352.</li>
+<li>Pereira B, Chin SF, Rueda OM, et al. The somatic mutation profiles
+of 2,433 breast cancers refine their genomic and transcriptomic
+landscapes. <em>Nat Commun</em>. 2016;7:11479.</li>
+<li>Ritchie ME, Phipson B, Wu D, et al. limma powers differential
+expression analyses for RNA-sequencing and microarray studies.
+<em>Nucleic Acids Res</em>. 2015;43(7):e47.</li>
+<li>Simon N, Friedman J, Hastie T, Tibshirani R. Regularization paths
+for Cox’s proportional hazards model via coordinate descent. <em>J Stat
+Softw</em>. 2011;39(5):1-13.</li>
+<li>Breiman L. Random Forests. <em>Mach Learn</em>.
+2001;45(1):5-32.</li>
+<li>Chen T, Guestrin C. XGBoost: a scalable tree boosting system.
+<em>KDD</em>. 2016:785-794.</li>
+<li>DeLong ER, DeLong DM, Clarke-Pearson DL. Comparing the areas under
+two or more correlated receiver operating characteristic curves.
+<em>Biometrics</em>. 1988;44(3):837-845.</li>
+<li>Nadeau C, Bengio Y. Inference for the generalization error. <em>Mach
+Learn</em>. 2003;52(3):239-281.</li>
+<li>Benjamini Y, Hochberg Y. Controlling the false discovery rate. <em>J
+R Stat Soc B</em>. 1995;57(1):289-300.</li>
+<li>Therneau TM, Grambsch PM. <em>Modeling Survival Data: Extending the
+Cox Model</em>. Springer; 2000.</li>
+<li>Meinshausen N, Bühlmann P. Stability selection. <em>J R Stat Soc
+B</em>. 2010;72(4):417-473.</li>
+<li>Niculescu-Mizil A, Caruana R. Predicting good probabilities with
+supervised learning. <em>ICML</em>. 2005:625-632.</li>
+</ul>
+<hr />
+<p><em>Uso restrito a pesquisa e ensino. Não é dispositivo médico e não
+deve orientar decisão clínica individual.</em></p>
+</body>
+</html>

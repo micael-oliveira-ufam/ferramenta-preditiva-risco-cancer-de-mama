@@ -1,0 +1,7 @@
+subtipo,n,perc,idade_mediana,idade_iqr,tamanho_mediano_mm,perc_G3,perc_N_positivo,perc_ER_positivo,perc_HER2_positivo,perc_quimioterapia,perc_hormonioterapia,npi_mediano,seguimento_mediano,obitos_totais,perc_obitos,obitos_por_cancer
+LumA,679,35.8,63.2,53.1-72.2,20.5,25.9,42.3,99.6,3.1,8,67.9,3.08,129.3,364,53.6,146
+LumB,461,24.3,66.2,58.4-73.6,25,55.6,51.4,100,9.1,9.8,80,4.05,104.5,303,65.7,181
+Her2,220,11.6,58.8,50.4-68.6,25,73.7,57.3,42.3,56.8,40,43.2,4.08,95.8,155,70.5,107
+Basal,199,10.5,54.5,43.5-65.7,25,90.5,53.8,13.6,10.1,54.3,29.1,5.02,89,111,55.8,81
+claudin-low,198,10.4,58.5,48.7-66.6,20,67.9,47.5,38.4,7.6,34.8,51,4.05,116.2,89,44.9,56
+Normal,140,7.4,57.8,46.6-66.2,23,34.1,40,85.7,9.3,22.9,61.4,4.03,117,76,54.3,48

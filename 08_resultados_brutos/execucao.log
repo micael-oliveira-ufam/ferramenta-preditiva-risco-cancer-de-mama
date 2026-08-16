@@ -1,0 +1,152 @@
+[17:15:35] MÓDULO 0 concluído — ambiente configurado. R: R version 4.3.3 (2024-02-29)
+[17:15:35] MÓDULO 1 — arquivo lido: 1904 pacientes x 693 colunas
+                   item                            valor
+1           n_pacientes                             1904
+2       n_colunas_total                              693
+3  n_variaveis_clinicas                               31
+4     n_genes_expressao                              489
+5       n_genes_mutacao                              173
+6        ids_duplicados                                0
+7  NAs_matriz_expressao                                0
+8            min_zscore                          -7.2432
+9            max_zscore                           20.395
+10   md5_arquivo_origem c619471beb87af0f9fd4e4a40058654d
+   
+    Died of Disease Died of Other Causes Living <NA>
+  0             622                  480      0    1
+  1               0                    0    801    0
+                                    etapa n_excluidos n_restante
+1 Histologia não mamária (Breast Sarcoma)           1       1903
+2          Subtipo PAM50/claudin-low = NC           6       1897
+3     Tempo de seguimento ausente ou <= 0           0       1897
+[17:15:36] MÓDULO 2 concluído — coorte analítica: 1897 pacientes | 489 genes | 173 genes com status mutacional
+      subtipo   n perc idade_mediana idade_iqr tamanho_mediano_mm perc_G3
+1        LumA 679 35.8          63.2 53.1-72.2               20.5    25.9
+2        LumB 461 24.3          66.2 58.4-73.6               25.0    55.6
+3        Her2 220 11.6          58.8 50.4-68.6               25.0    73.7
+4       Basal 199 10.5          54.5 43.5-65.7               25.0    90.5
+5 claudin-low 198 10.4          58.5 48.7-66.6               20.0    67.9
+6      Normal 140  7.4          57.8 46.6-66.2               23.0    34.1
+  perc_N_positivo perc_ER_positivo perc_HER2_positivo perc_quimioterapia
+1            42.3             99.6                3.1                8.0
+2            51.4            100.0                9.1                9.8
+3            57.3             42.3               56.8               40.0
+4            53.8             13.6               10.1               54.3
+5            47.5             38.4                7.6               34.8
+6            40.0             85.7                9.3               22.9
+  perc_hormonioterapia npi_mediano seguimento_mediano obitos_totais perc_obitos
+1                 67.9        3.08              129.3           364        53.6
+2                 80.0        4.05              104.5           303        65.7
+3                 43.2        4.08               95.8           155        70.5
+4                 29.1        5.02               89.0           111        55.8
+5                 51.0        4.05              116.2            89        44.9
+6                 61.4        4.03              117.0            76        54.3
+  obitos_por_cancer
+1               146
+2               181
+3               107
+4                81
+5                56
+6                48
+     variavel                   teste estatistica gl       valor_p
+1        grau Qui-quadrado de Pearson      403.81 10  1.453886e-80
+2      ln_pos Qui-quadrado de Pearson       24.91  5  1.450131e-04
+3          er Qui-quadrado de Pearson     1093.86  5 2.855563e-234
+4          pr Qui-quadrado de Pearson      505.33  5 5.634921e-107
+5        her2 Qui-quadrado de Pearson      463.53  5  5.924105e-98
+6      quimio Qui-quadrado de Pearson      309.94  5  7.283580e-65
+7    hormonio Qui-quadrado de Pearson      207.37  5  7.539887e-43
+8       radio Qui-quadrado de Pearson       31.16  5  8.726315e-06
+9   menopausa Qui-quadrado de Pearson       91.89  5  2.689856e-18
+10      idade          Kruskal-Wallis      139.33  5  2.482557e-28
+11    tamanho          Kruskal-Wallis       58.33  5  2.689597e-11
+12 linfonodos          Kruskal-Wallis       25.72  5  1.012892e-04
+13        npi          Kruskal-Wallis      222.93  5  3.507371e-46
+14   os_meses          Kruskal-Wallis       57.56  5  3.880975e-11
+     valor_p_fdr
+1   5.088602e-80
+2   1.450131e-04
+3  3.997789e-233
+4  3.944445e-106
+5   2.764582e-97
+6   2.039403e-64
+7   1.507977e-42
+8   1.018070e-05
+9   4.184221e-18
+10  4.344475e-28
+11  3.765435e-11
+12  1.090806e-04
+13  8.183865e-46
+14  4.939423e-11
+[17:15:36] MÓDULO 3 concluído — caracterização clínica exportada
+      subtipo genes_testados signif_FDR signif_FDR_e_efeito super sub
+1       Basal            489        300                 151    89  62
+2        Her2            489        248                  63    36  27
+3        LumA            489        287                  77    30  47
+4        LumB            489        308                  92    33  59
+5      Normal            489        201                  78    38  40
+6 claudin.low            489        269                 107    62  45
+Warning messages:
+1: In grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Expressão média (z-score) por subtipo — top 10 genes/subtipo' in 'mbcsToSbcs': dot substituted for <e2>
+2: In grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Expressão média (z-score) por subtipo — top 10 genes/subtipo' in 'mbcsToSbcs': dot substituted for <80>
+3: In grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Expressão média (z-score) por subtipo — top 10 genes/subtipo' in 'mbcsToSbcs': dot substituted for <94>
+null device 
+          1 
+[17:15:38] MÓDULO 4 concluído — 568 associações gene-subtipo significativas
+[17:16:28] MÓDULO 5 — erro OOB do Random Forest: 23.77%
+[17:16:34] MÓDULO 6 — genes com FDR<0.05: OS = 125 | DSS = 137
+null device 
+          1 
+[17:16:38] MÓDULO 7 concluído — log-rank global entre subtipos: p = 0.000000000374
+                                              modelo n_genes C_index_treino
+1               Assinatura gênica LASSO (lambda.min)      65         0.6829
+2               Assinatura gênica LASSO (lambda.1se)      12         0.6230
+3 Clínico (idade, grau, tamanho, linfonodo, subtipo)       0         0.6570
+4        Combinado (clínico + assinatura lambda.min)      65         0.7114
+5        Combinado (clínico + assinatura lambda.1se)      12         0.6749
+  C_index_validacao
+1            0.5877
+2            0.5851
+3            0.6608
+4            0.6514
+5            0.6666
+null device 
+          1 
+[17:16:52] MÓDULO 8 concluído — 65 genes na assinatura; C-index validação = 0.5877
+                                modelo C_index_medio desvio_padrao minimo
+1 Assinatura gênica (LASSO lambda.1se)        0.5549        0.0354 0.5000
+2                              Clínico        0.6553        0.0139 0.6267
+3                            Combinado        0.6556        0.0142 0.6336
+  maximo
+1 0.6111
+2 0.6890
+3 0.6906
+Warning message:
+In wilcox.test.default(rep_perf$C_combinado, rep_perf$C_clinico,  :
+  cannot compute exact p-value with zeroes
+[17:22:05] MÓDULO 8b concluído — C-index médio (25 partições): assinatura = 0.5549 | clínico = 0.6553 | combinado = 0.6556
+[17:22:06] MÓDULO 9 concluído — 71 genes com frequência >= 2% testados
+                                 parametro                        valor
+1                    Data/hora da execução          2026-08-06 17:22:07
+2                              Versão do R R version 4.3.3 (2024-02-29)
+3            Pacientes na coorte analítica                         1897
+4            Genes de expressão analisados                          489
+5       Genes com dado mutacional testados                           71
+6                Óbitos por qualquer causa                         1098
+7                Óbitos por câncer de mama                          619
+8               Seguimento mediano (meses)                        115.6
+9  Associações gene-subtipo significativas                          568
+10       Genes prognósticos (FDR<0,05, OS)                          125
+11           Genes na assinatura LASSO-Cox                           65
+12          C-index validação (assinatura)                       0.5877
+13             C-index validação (clínico)                       0.6608
+14           C-index validação (combinado)                       0.6514
+15 C-index médio 25 partições (assinatura)                       0.5549
+16    C-index médio 25 partições (clínico)                       0.6553
+17  C-index médio 25 partições (combinado)                       0.6556
+18              Erro OOB Random Forest (%)                        23.77
+19           Tempo total de execução (min)                         6.56
+[17:22:08] PIPELINE CONCLUÍDA em 6.57 min

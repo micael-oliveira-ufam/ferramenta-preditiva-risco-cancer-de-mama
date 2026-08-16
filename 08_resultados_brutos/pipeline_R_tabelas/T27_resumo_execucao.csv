@@ -1,0 +1,20 @@
+parametro,valor
+Data/hora da execução,2026-08-06 17:22:07
+Versão do R,R version 4.3.3 (2024-02-29)
+Pacientes na coorte analítica,1897
+Genes de expressão analisados,489
+Genes com dado mutacional testados,71
+Óbitos por qualquer causa,1098
+Óbitos por câncer de mama,619
+Seguimento mediano (meses),115.6
+Associações gene-subtipo significativas,568
+"Genes prognósticos (FDR<0,05, OS)",125
+Genes na assinatura LASSO-Cox,65
+C-index validação (assinatura),0.5877
+C-index validação (clínico),0.6608
+C-index validação (combinado),0.6514
+C-index médio 25 partições (assinatura),0.5549
+C-index médio 25 partições (clínico),0.6553
+C-index médio 25 partições (combinado),0.6556
+Erro OOB Random Forest (%),23.77
+Tempo total de execução (min),6.56

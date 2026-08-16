@@ -1,0 +1,7 @@
+conjunto,grupo_risco,n,obitos,perc_obitos
+Derivação,Baixo risco,441,149,33.8
+Derivação,Risco intermediário,440,266,60.5
+Derivação,Alto risco,441,351,79.6
+Validação,Baixo risco,206,100,48.5
+Validação,Risco intermediário,185,113,61.1
+Validação,Alto risco,184,119,64.7

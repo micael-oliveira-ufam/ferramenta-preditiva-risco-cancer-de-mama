@@ -1,0 +1,4 @@
+modelo,C_index_medio,desvio_padrao,minimo,maximo
+Assinatura gênica (LASSO lambda.1se),0.5549,0.0354,0.5,0.6111
+Clínico,0.6553,0.0139,0.6267,0.689
+Combinado,0.6556,0.0142,0.6336,0.6906

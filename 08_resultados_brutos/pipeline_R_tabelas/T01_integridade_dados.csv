@@ -1,0 +1,11 @@
+item,valor
+n_pacientes,1904
+n_colunas_total,693
+n_variaveis_clinicas,31
+n_genes_expressao,489
+n_genes_mutacao,173
+ids_duplicados,0
+NAs_matriz_expressao,0
+min_zscore,-7.2432
+max_zscore,20.395
+md5_arquivo_origem,c619471beb87af0f9fd4e4a40058654d

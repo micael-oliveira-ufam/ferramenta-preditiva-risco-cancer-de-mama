@@ -1,0 +1,5 @@
+tipo,age_at_diagnosis,tumor_size,nottingham_prognostic_index,lymph_nodes_examined_positive,tempo,risco
+FALSO NEGATIVO (obito nao previsto),61.31,20.0,4.04,0.0,70.1,0.15
+FALSO POSITIVO (alarme sem obito),65.84,25.0,4.07,1.0,174.02,0.64
+acerto: alto risco / obito,69.1,30.0,5.04,2.0,46.0,0.82
+acerto: baixo risco / viva,57.34,20.0,4.02,0.0,193.17,0.06

@@ -1,0 +1,13 @@
+# Python >= 3.10
+pandas
+numpy
+scipy
+scikit-learn>=1.3
+statsmodels
+lifelines>=0.27
+xgboost>=2.0
+matplotlib
+# R >= 4.3 — o metabric_pipeline.R instala sozinho: data.table, dplyr, tidyr, purrr,
+# stringr, forcats, limma, survival, survminer, glmnet, randomForest, matrixStats,
+# broom, ggplot2, ggrepel, scales, RColorBrewer, viridis, pheatmap, patchwork,
+# cowplot, gridExtra

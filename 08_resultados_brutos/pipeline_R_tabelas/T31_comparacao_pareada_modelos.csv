@@ -1,0 +1,4 @@
+comparacao,diferenca_media,valor_p_wilcoxon
+Combinado vs Clínico,0.0003,0.702238315221897
+Combinado vs Assinatura,0.1007,0.0000000596046447753906
+Assinatura vs Clínico,-0.1004,0.0000000596046447753906

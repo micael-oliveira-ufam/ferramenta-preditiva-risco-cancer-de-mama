@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel METABRIC — Estratificação de Risco em Câncer de Mama | FCF/UFAM</title>
+<meta name="description" content="Ferramenta de pesquisa e ensino para estratificação de risco em câncer de mama a partir da coorte METABRIC. Seleção de algoritmo e curvas ROC de validação. Desenvolvido na Faculdade de Ciências Farmacêuticas da UFAM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#F8FAFC; --tinta-2:#FFFFFF; --tinta-3:#E2E8F0; --tinta-4:#F1F5F9;
+  --papel:#0F172A; --papel-2:#334155; --papel-3:#64748B;
+  --sinal:#0D9488; --sinal-bg:#F0FDFA; --sinal-borda:#99F6E4;
+  --alerta:#D97706; --alerta-bg:#FFFBEB; --alerta-borda:#FDE68A;
+  --falha:#DC2626; --falha-bg:#FEF2F2; --falha-borda:#FECACA;
+  --ufam-azul:#0284C7; --ufam-azul-escuro:#0369A1; --ufam-azul-bg:#F0F9FF; --ufam-azul-borda:#BAE6FD;
+  --linha:#E2E8F0; --r:6px;
+  --sombra:0 1px 3px 0 rgba(15,23,42,.05),0 1px 2px -1px rgba(15,23,42,.05);
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--tinta);color:var(--papel);font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.dado{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+header{border-bottom:1px solid var(--linha);background:linear-gradient(180deg,#FFF,#F8FAFC);box-shadow:var(--sombra)}
+.top{display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;padding:24px 0 20px}
+.brand-group{display:flex;gap:20px;align-items:center}
+.logo-ufam{height:78px;width:auto;max-width:90px;object-fit:contain;flex-shrink:0;border-radius:4px;background:#FFF;padding:2px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid var(--tinta-3);transition:transform .2s ease}
+.logo-ufam:hover{transform:scale(1.03)}
+.inst-meta{display:flex;flex-direction:column;gap:2px}
+.inst-title{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ufam-azul-escuro)}
+.inst-dept{font-size:12.5px;font-weight:600;color:var(--papel-2)}
+h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:clamp(24px,3.8vw,36px);line-height:1.1;letter-spacing:-.015em;margin:6px 0 0;color:var(--papel)}
+h1 .sub{display:inline-block;color:var(--ufam-azul);font-size:.42em;letter-spacing:.18em;text-transform:uppercase;font-weight:700;background:var(--ufam-azul-bg);padding:2px 8px;border-radius:4px;border:1px solid var(--ufam-azul-borda);margin-right:8px;vertical-align:middle}
+.origem{color:var(--papel-2);font-size:13.5px;max-width:58ch;margin:6px 0 0}
+.selo{border:1px solid var(--linha);border-radius:var(--r);padding:10px 16px;background:#FFF;box-shadow:var(--sombra);text-align:right}
+.selo b{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--papel-3);font-weight:600}
+.selo span{font-size:16px;font-weight:700;color:var(--ufam-azul-escuro)}
+
+.bloco-autoria{background:#FFF;border-bottom:1px solid var(--tinta-3);padding:16px 0}
+.autoria-cabecalho{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:12px}
+.autoria-rotulo{display:flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--papel-3);white-space:nowrap}
+.autoria-rotulo .icone{color:var(--ufam-azul);font-size:14px}
+.autores-lista{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.autor-badge{display:inline-flex;align-items:center;gap:6px;background:var(--tinta-4);border:1px solid var(--tinta-3);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600;color:var(--papel);transition:all .15s ease}
+.autor-badge:hover{background:var(--ufam-azul-bg);border-color:var(--ufam-azul-borda);color:var(--ufam-azul-escuro)}
+.autor-badge .ponto{width:6px;height:6px;border-radius:50%;background:var(--ufam-azul)}
+.autor-badge sup{font-family:'IBM Plex Mono',monospace;color:var(--ufam-azul-escuro);font-weight:700;font-size:11px;margin-left:2px}
+.filiacoes-lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:6px 20px;padding-top:10px;border-top:1px dashed var(--tinta-3)}
+.filiacao-item{font-size:12px;color:var(--papel-2);line-height:1.45;display:flex;align-items:flex-start;gap:8px}
+.filiacao-item b{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--ufam-azul-bg);color:var(--ufam-azul-escuro);border:1px solid var(--ufam-azul-borda);font-size:10.5px;font-family:'IBM Plex Mono',monospace;flex-shrink:0;margin-top:1px}
+
+.aviso{background:var(--alerta-bg);border-top:1px solid var(--alerta-borda);border-bottom:1px solid var(--alerta-borda);color:#78350F;font-size:13px;padding:12px 0}
+.aviso .wrap{display:flex;gap:12px;align-items:flex-start}
+.aviso strong{color:#92400E;font-weight:700}
+.aviso-icone{font-size:16px;line-height:1.2;color:var(--alerta);flex-shrink:0}
+
+.grade{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:28px;padding:32px 0 60px}
+@media(max-width:940px){.grade{grid-template-columns:1fr;gap:22px}}
+.painel{background:var(--tinta-2);border:1px solid var(--tinta-3);border-radius:var(--r);box-shadow:var(--sombra);overflow:hidden}
+.painel>h2{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--papel-2);margin:0;padding:14px 20px;background:var(--tinta-4);border-bottom:1px solid var(--tinta-3);font-weight:700}
+.corpo{padding:20px}
+.nota{color:var(--papel-3);font-size:12.5px;margin:10px 0 0;line-height:1.5}
+
+.exemplos{display:grid;gap:8px}
+.ex{display:block;width:100%;text-align:left;cursor:pointer;background:#FFF;border:1px solid var(--tinta-3);border-radius:var(--r);color:var(--papel);padding:12px 14px;font:inherit;transition:border-color .15s,background .15s,box-shadow .15s}
+.ex:hover{border-color:var(--ufam-azul);background:var(--ufam-azul-bg)}
+.ex:focus-visible{outline:2px solid var(--ufam-azul);outline-offset:2px}
+.ex b{display:block;font-size:14px;font-weight:600;color:var(--papel)}
+.ex span{display:block;color:var(--papel-2);font-size:12.5px;margin-top:2px}
+.ex.sel{border-color:var(--ufam-azul);background:var(--ufam-azul-bg);box-shadow:0 0 0 1px var(--ufam-azul)}
+
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.campos{grid-template-columns:1fr}}
+label{display:block;font-size:12.5px;color:var(--papel-2);margin-bottom:5px;font-weight:600}
+input,select{width:100%;background:#FFF;border:1px solid var(--tinta-3);border-radius:var(--r);color:var(--papel);padding:9px 12px;font-family:'IBM Plex Mono',monospace;font-size:14px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:none;border-color:var(--ufam-azul);box-shadow:0 0 0 3px rgba(2,132,199,.15)}
+textarea{width:100%;min-height:86px;background:#FFF;border:1px solid var(--tinta-3);border-radius:var(--r);color:var(--papel);padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;resize:vertical;transition:border-color .15s,box-shadow .15s}
+textarea:focus{outline:none;border-color:var(--ufam-azul);box-shadow:0 0 0 3px rgba(2,132,199,.15)}
+
+.painel-recolhivel{background:var(--tinta-2);border:1px solid var(--tinta-3);border-radius:var(--r);box-shadow:var(--sombra);margin-top:16px;overflow:hidden}
+.painel-recolhivel summary{padding:12px 18px;font-family:'IBM Plex Sans Condensed',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--papel-2);background:var(--tinta-4);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;user-select:none;list-style:none;transition:background .15s ease,color .15s ease}
+.painel-recolhivel summary::-webkit-details-marker{display:none}
+.painel-recolhivel summary:hover{background:var(--ufam-azul-bg);color:var(--ufam-azul-escuro)}
+.painel-recolhivel[open] summary{border-bottom:1px solid var(--tinta-3);color:var(--ufam-azul-escuro)}
+.badge-opc{font-size:11px;font-weight:600;color:var(--ufam-azul);background:var(--ufam-azul-bg);border:1px solid var(--ufam-azul-borda);border-radius:12px;padding:2px 8px;text-transform:none;letter-spacing:0;white-space:nowrap}
+.badge-opc.req{color:#92400E;background:var(--alerta-bg);border-color:var(--alerta-borda)}
+
+.modelos{display:grid;gap:8px;margin-top:4px}
+.mod{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;cursor:pointer;border:1px solid var(--tinta-3);border-radius:var(--r);background:#FFF;transition:all .15s ease}
+.mod:hover{border-color:var(--papel-3);background:var(--tinta-4)}
+.mod.on{border-color:var(--ufam-azul);background:var(--ufam-azul-bg);box-shadow:0 0 0 1px var(--ufam-azul)}
+.mod input{width:auto;margin-top:3px;accent-color:var(--ufam-azul)}
+.mod .t{font-size:14px;font-weight:600;color:var(--papel)}
+.mod .d{font-size:12.5px;color:var(--papel-2)}
+.mod .auc{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ufam-azul-escuro);white-space:nowrap;text-align:right}
+.mod .auc small{display:block;font-weight:400;font-size:10.5px;color:var(--papel-3)}
+
+.risco{padding:22px 20px;border-bottom:1px solid var(--tinta-3);background:#FFF}
+.numero{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:68px;font-weight:700;line-height:.92;letter-spacing:-.03em;color:var(--papel);margin-top:4px}
+.numero small{font-size:.36em;font-weight:600;color:var(--papel-3);margin-left:4px}
+.numero.vazio{font-size:24px;line-height:1.3;letter-spacing:0;color:var(--papel-3);font-family:'IBM Plex Sans',sans-serif;font-weight:600}
+.rot{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--papel-3);font-weight:700}
+
+.faixa{margin-top:18px}
+.trilho{position:relative;height:36px;border:1px solid var(--tinta-3);border-radius:var(--r);display:flex;overflow:hidden;background:var(--tinta-4)}
+.seg{flex:1;display:flex;align-items:center;justify-content:center;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--papel-3);font-weight:600;border-right:1px solid var(--tinta-3);transition:all .2s ease}
+.seg:last-child{border-right:0}
+.seg.on{font-weight:700}
+.seg.b.on{background:var(--sinal);color:#FFF}
+.seg.m.on{background:var(--alerta);color:#FFF}
+.seg.a.on{background:var(--falha);color:#FFF}
+.marca{position:absolute;top:-4px;bottom:-4px;width:3px;background:#0F172A;box-shadow:0 0 0 2px #FFF;transition:left .35s cubic-bezier(.4,0,.2,1);z-index:2}
+.legenda{display:flex;justify-content:space-between;font-size:12px;color:var(--papel-3);margin-top:7px;font-family:'IBM Plex Mono',monospace}
+
+.confianca{padding:20px;background:#FFF}
+.veredito{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--r);border:1px solid;font-weight:500;font-size:14px;line-height:1.45}
+.veredito.ok{border-color:var(--sinal-borda);background:var(--sinal-bg);color:#115E59}
+.veredito.nao{border-color:var(--falha-borda);background:var(--falha-bg);color:#991B1B}
+.veredito.neutro{border-color:var(--tinta-3);background:var(--tinta-4);color:var(--papel-2)}
+.veredito .ic{font-size:24px;line-height:1;flex-shrink:0}
+.escala{margin-top:16px}
+.escala h3{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--papel-2);margin:0 0 10px;font-weight:700}
+.linha-auc{display:grid;grid-template-columns:96px 1fr 124px;gap:10px;align-items:center;padding:6px 8px;font-size:13px;border-radius:4px}
+.barra{position:relative;height:16px;background:var(--tinta-4);border:1px solid var(--tinta-3);border-radius:3px}
+.barra .acaso{position:absolute;top:-3px;bottom:-3px;width:2px;background:#94A3B8}
+.barra .ic{position:absolute;top:3px;bottom:3px;background:var(--sinal);opacity:.4;border-radius:2px}
+.barra .ic.ruim{background:var(--falha);opacity:.45}
+.barra .pt{position:absolute;top:1px;bottom:1px;width:3px;background:var(--sinal);border-radius:1px}
+.barra .pt.ruim{background:var(--falha)}
+.linha-auc.foco{background:var(--ufam-azul-bg);border:1px solid var(--ufam-azul-borda)}
+.linha-auc .v{font-family:'IBM Plex Mono',monospace;color:var(--papel-2);text-align:right;font-size:12px;font-weight:500}
+
+.probs{display:grid;gap:6px;margin-top:12px}
+.prob{display:grid;grid-template-columns:96px 1fr 52px;gap:10px;align-items:center;font-size:13px}
+.pb{height:14px;background:var(--tinta-4);border:1px solid var(--tinta-3);border-radius:3px;overflow:hidden}
+.pb i{display:block;height:100%;background:var(--ufam-azul);opacity:.6;transition:width .35s ease}
+.prob.top i{opacity:1;background:var(--sinal)}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--tinta-3)}
+th{color:var(--papel-3);font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--tinta-4)}
+td.n{font-family:'IBM Plex Mono',monospace;text-align:right}
+tr.destaque td{background:var(--ufam-azul-bg);font-weight:600}
+
+details{border-top:1px solid var(--tinta-3);padding:14px 20px;background:#FFF}
+details summary{cursor:pointer;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--papel-2);font-weight:700}
+details summary:focus-visible{outline:2px solid var(--ufam-azul);outline-offset:2px}
+details[open] summary{color:var(--ufam-azul-escuro)}
+.det{padding-top:12px}
+
+.bt{background:var(--ufam-azul);color:#FFF;border:0;border-radius:var(--r);padding:11px 20px;font:inherit;font-weight:700;cursor:pointer;font-size:14.5px;box-shadow:0 1px 2px rgba(0,0,0,.08);transition:all .15s ease}
+.bt:hover{background:var(--ufam-azul-escuro);box-shadow:0 2px 4px rgba(0,0,0,.12)}
+.bt.sec{background:#FFF;color:var(--papel);border:1px solid var(--tinta-3);box-shadow:none}
+.bt.sec:hover{border-color:var(--ufam-azul);background:var(--ufam-azul-bg);color:var(--ufam-azul-escuro)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.status{font-size:13px;color:var(--papel-2);margin-top:10px;min-height:18px;line-height:1.4}
+.status.erro{color:var(--falha);font-weight:600}
+.status.ok{color:var(--sinal);font-weight:600}
+
+.roc-area{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:780px){.roc-area{grid-template-columns:1fr}}
+.leg{display:grid;gap:4px;font-size:13px}
+.leg .it{display:flex;gap:8px;align-items:center;cursor:pointer;padding:4px 6px;border-radius:4px;border:1px solid transparent}
+.leg .it:hover{background:var(--tinta-4);border-color:var(--tinta-3)}
+.leg .it.off{opacity:.4}
+.leg .it.atual{background:var(--ufam-azul-bg);border-color:var(--ufam-azul-borda);font-weight:600}
+.leg .sw{width:16px;height:3px;border-radius:2px;flex:none}
+.leg .nm{flex:1}
+.leg .vl{font-family:'IBM Plex Mono',monospace;color:var(--papel-2)}
+
+.explica{display:grid;gap:12px}
+.alg{border:1px solid var(--tinta-3);border-radius:var(--r);padding:14px 16px;background:#FFF}
+.alg.atual{border-color:var(--ufam-azul);background:var(--ufam-azul-bg)}
+.alg h4{margin:0 0 5px;font-size:14.5px;font-weight:700;color:var(--papel)}
+.alg p{margin:0;font-size:13px;color:var(--papel-2);line-height:1.5}
+.alg .met{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ufam-azul-escuro);font-weight:600}
+
+footer{border-top:1px solid var(--linha);background:#FFF;padding:32px 0 48px;color:var(--papel-2);font-size:13px}
+footer .footer-content{display:flex;flex-direction:column;gap:16px}
+.footer-authorship{padding:16px;background:var(--tinta-4);border-radius:var(--r);border:1px solid var(--tinta-3)}
+.footer-authorship h4{margin:0 0 8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ufam-azul-escuro);font-weight:700}
+.footer-authorship p{margin:4px 0;line-height:1.5}
+footer a{color:var(--ufam-azul);text-decoration:none;font-weight:600}
+footer a:hover{text-decoration:underline}
+.chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:#FFF;border:1px solid var(--tinta-3);border-radius:4px;padding:2px 8px;color:var(--papel-2);margin-right:6px;font-weight:500}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap top">
+    <div class="brand-group">
+      <img src="ufam_logo.svg" alt="Marca da Universidade Federal do Amazonas (UFAM)" class="logo-ufam" width="80" height="78">
+      <div class="inst-meta">
+        <span class="inst-title">Universidade Federal do Amazonas · UFAM</span>
+        <span class="inst-dept">Faculdade de Ciências Farmacêuticas</span>
+        <h1><span class="sub">METABRIC</span>Estratificação de Risco em Câncer de Mama</h1>
+        <p class="origem">Dezesseis modelos calibrados em 1.560 pacientes com desfecho de 10 anos determinado,
+        com seleção de algoritmo, curvas ROC de validação e veredito de confiabilidade por subtipo.</p>
+      </div>
+    </div>
+    <div class="selo"><b>Finalidade</b><span>Pesquisa &amp; Ensino</span></div>
+  </div>
+</header>
+
+<section class="bloco-autoria" aria-label="Autoria do Projeto e Filiações">
+  <div class="wrap">
+    <div class="autoria-cabecalho">
+      <span class="autoria-rotulo"><span class="icone">✦</span> Autoria do Projeto:</span>
+      <div class="autores-lista">
+        <span class="autor-badge"><span class="ponto"></span>Beatriz Medeiros de Souza Oliveira Andrade<sup>1</sup></span>
+        <span class="autor-badge"><span class="ponto"></span>Micael Davi Lima de Oliveira<sup>2</sup></span>
+        <span class="autor-badge"><span class="ponto"></span>Roberto Alexandre Alves Barbosa Filho<sup>3</sup></span>
+        <span class="autor-badge"><span class="ponto"></span>Toni Ricardo Martins<sup>4,5,6</sup></span>
+      </div>
+    </div>
+    <div class="filiacoes-lista">
+      <div class="filiacao-item"><b>1</b><span>FM - UFAM – Faculdade de Medicina, Universidade Federal do Amazonas, Manaus, AM, Brasil.</span></div>
+      <div class="filiacao-item"><b>2</b><span>FCF - UFAM – Faculdade de Ciências Farmacêuticas, Universidade Federal do Amazonas, Manaus, AM, Brasil.</span></div>
+      <div class="filiacao-item"><b>3</b><span>IPEAM - Instituto de Pesquisas do Exército na Amazônia, Manaus, AM, Brasil.</span></div>
+      <div class="filiacao-item"><b>4</b><span>FCF – UFAM – Docente da Faculdade de Ciências Farmacêuticas, Universidade Federal do Amazonas, Manaus, AM, Brasil.</span></div>
+      <div class="filiacao-item"><b>5</b><span>PPGIBA – UFAM – Programa de Pós-graduação em Imunologia Básica e Aplicada, Universidade Federal do Amazonas, Manaus, AM, Brasil.</span></div>
+      <div class="filiacao-item"><b>6</b><span>IMT – LIM – USP - Instituto de Medicina Tropical, Laboratório de Virologia - LIM 52, Universidade de São Paulo, São Paulo, SP, Brasil.</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="aviso">
+  <div class="wrap">
+    <span class="aviso-icone">⚠</span>
+    <p style="margin:0"><strong>Não é dispositivo médico e não deve orientar decisão clínica individual.</strong>
+    Os modelos vêm de uma coorte observacional histórica (majoritariamente anterior ao trastuzumabe),
+    sem validação externa. Servem para ensino, pesquisa metodológica e demonstração dos limites de modelos prognósticos.</p>
+  </div>
+</div>
+
+<main class="wrap grade">
+
+  <div>
+    <section class="painel">
+      <h2>1 · Expressão gênica</h2>
+      <div class="corpo">
+        <label for="colar">Cole os z-scores dos genes (vírgula, ponto-e-vírgula, tabulação ou espaço) ou pares gene=valor:</label>
+        <textarea id="colar" placeholder="Exemplo de pares: aurka=1,2, stat5a=-0,8, gsk3b=0,4 (aceita decimais em vírgula ou ponto, ou os 489 valores na ordem da planilha)"></textarea>
+        <div class="acoes">
+          <button type="button" class="bt" id="btPredizerGenes">🔬 Ler valores e predizer</button>
+          <button type="button" class="bt sec" id="btZerar">Limpar expressão</button>
+        </div>
+        <div class="status" id="statusGenes">Nenhum valor de expressão carregado.</div>
+      </div>
+    </section>
+
+    <details class="painel-recolhivel" id="detalhesExemplos" open>
+      <summary><span>📂 Casos de exemplo da coorte &amp; Planilha CSV</span><span class="badge-opc">Clique para recolher</span></summary>
+      <div class="corpo">
+        <div class="exemplos" id="exemplos"></div>
+        <p class="nota">Pacientes reais da coorte METABRIC, com os 489 valores de expressão gênica e os dados clínicos correspondentes. Carregar um caso preenche tudo de uma vez.</p>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--tinta-3);display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <input type="file" id="arquivoCsv" accept=".csv,.txt" style="display:none">
+          <button type="button" class="bt sec" id="btCarregarCsv" style="font-size:12.5px;padding:6px 12px">📂 Carregar arquivo CSV local</button>
+          <a href="exemplos_entrada.csv" download="exemplos_entrada_metabric.csv" class="bt sec" style="font-size:12.5px;padding:6px 12px;text-decoration:none">📥 Planilha de Casos (CSV)</a>
+          <a href="modelos.json" download="modelos_metabric.json" class="bt sec" style="font-size:12.5px;padding:6px 12px;text-decoration:none">📥 Modelos Treinados (JSON)</a>
+        </div>
+      </div>
+    </details>
+
+    <details class="painel-recolhivel" id="detalhesClinico">
+      <summary><span>🩺 Dados clínicos</span><span class="badge-opc req" id="badgeClinico">Necessários no modelo atual</span></summary>
+      <div class="corpo">
+        <p class="nota" style="margin-top:0;margin-bottom:12px">Campos em branco <b>não</b> são preenchidos com zero: o modelo que depende deles fica indisponível até serem informados. Isso evita predições calculadas sobre valores inventados.</p>
+        <div class="campos">
+          <div><label for="idade">Idade ao diagnóstico (anos)</label><input id="idade" type="text" inputmode="decimal" value="" placeholder="Ex.: 61,3 ou 61.3"></div>
+          <div><label for="grau">Grau histológico</label><select id="grau"><option value="" selected>Não informado</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+          <div><label for="tamanho">Tamanho do tumor (mm)</label><input id="tamanho" type="text" inputmode="decimal" value="" placeholder="Ex.: 22 ou 22,0"></div>
+          <div><label for="linfo">Linfonodos positivos</label><input id="linfo" type="text" inputmode="decimal" value="" placeholder="Ex.: 0 ou 1"></div>
+          <div><label for="npi">Índice prognóstico de Nottingham (NPI)</label><input id="npi" type="text" inputmode="decimal" value="" placeholder="Ex.: 4,04 ou 4.04"></div>
+          <div><label for="subtipo">Subtipo molecular clínico</label><select id="subtipo"></select></div>
+        </div>
+        <p class="nota">O índice de Nottingham combina tamanho, grau e status nodal. Aceita decimais com vírgula ou ponto.</p>
+      </div>
+    </details>
+
+    <section class="painel" style="margin-top:16px">
+      <h2>2 · Conjunto de variáveis</h2>
+      <div class="corpo"><div class="modelos" id="seletorConjunto"></div></div>
+    </section>
+
+    <section class="painel" style="margin-top:16px">
+      <h2>3 · Algoritmo de treinamento</h2>
+      <div class="corpo">
+        <div class="modelos" id="seletorAlg"></div>
+        <p class="nota" id="notaAlg"></p>
+      </div>
+    </section>
+
+    <div id="statusDesfecho" style="margin-top:16px;padding:12px 14px;background:#F8FAFC;border:1px solid var(--tinta-3);border-radius:var(--r);font-size:13px;color:var(--papel-2);line-height:1.45"></div>
+  </div>
+
+  <div>
+    <section class="painel">
+      <h2>Risco estimado de óbito em 10 anos
+        <span style="font-size:12px;font-weight:600;color:var(--falha);text-transform:none;letter-spacing:0;background:var(--falha-bg);padding:2px 8px;border-radius:4px;border:1px solid var(--falha-borda);margin-left:6px">Confiabilidade limitada</span></h2>
+
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:12px 14px;margin:16px 20px 0;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:18px;line-height:1;color:#D97706;flex-shrink:0">⚠</span>
+        <div style="font-size:13px;line-height:1.45;color:#92400E">
+          <strong>Discriminação moderada:</strong> o melhor dos 16 modelos alcança AUC 0,749 (IC 95% 0,725–0,773)
+          e nenhum foi validado prospectivamente. O painel serve para ordenar risco e demonstrar limites
+          metodológicos, não para decisão clínica.
+        </div>
+      </div>
+
+      <div class="risco">
+        <div class="rot">Probabilidade calibrada · cálculo em tempo real no navegador</div>
+        <div class="numero" id="pct">—<small>%</small></div>
+        <div class="faixa">
+          <div class="trilho" id="trilho">
+            <div class="seg b" data-g="baixo">Baixo</div>
+            <div class="seg m" data-g="medio">Médio</div>
+            <div class="seg a" data-g="alto">Alto</div>
+            <div class="marca" id="marca" style="left:-10px"></div>
+          </div>
+          <div class="legenda"><span>0%</span><span id="legMeio"></span><span>100%</span></div>
+        </div>
+        <table id="tabTercil"></table>
+      </div>
+
+      <div class="confianca">
+        <div class="veredito neutro" id="veredito"><span class="ic">◎</span>
+          <span id="vTexto">Informe os dados para ver a confiabilidade desta predição.</span></div>
+        <div class="escala">
+          <h3>Capacidade de discriminação por subtipo (AUC com IC 95%)</h3>
+          <div id="escalaSubtipo"></div>
+          <h3 style="margin-top:16px">Por estágio tumoral</h3>
+          <div id="escalaEstagio"></div>
+          <p class="nota">A marca vertical à esquerda de cada barra é o acaso (AUC 0,5). Quando o intervalo
+          cruza essa linha, a predição não se distingue de um sorteio. Estas barras foram estimadas sobre o
+          modelo combinado calibrado e servem como referência de contexto, não do algoritmo específico em uso.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="painel" style="margin-top:20px">
+      <h2>Curvas ROC de validação</h2>
+      <div class="corpo">
+        <div class="roc-area">
+          <div><svg id="roc" viewBox="0 0 300 300" style="width:100%;height:auto" role="img" aria-label="Curvas ROC dos algoritmos"></svg></div>
+          <div>
+            <div class="leg" id="legRoc"></div>
+            <p class="nota">Validação cruzada 5-fold com busca de hiperparâmetros dentro de cada partição.
+            Clique em um algoritmo para mostrar ou ocultar sua curva. A diagonal tracejada é o acaso.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="painel" style="margin-top:20px">
+      <h2>Classificação do subtipo pela expressão</h2>
+      <div class="corpo">
+        <div id="subtipoSaida">Carregue valores de expressão gênica para classificar o subtipo.</div>
+        <div class="probs" id="probs"></div>
+        <div class="status" id="confSubtipo"></div>
+      </div>
+    </section>
+
+    <section class="painel" style="margin-top:20px">
+      <h2>Como funciona cada algoritmo</h2>
+      <div class="corpo"><div class="explica" id="explica"></div></div>
+      <details><summary>Desempenho dos 16 modelos</summary><div class="det" id="tabelaTudo"></div></details>
+      <details><summary>Calibração observada</summary><div class="det" id="calibracao"></div></details>
+      <details><summary>O que este painel não faz</summary>
+        <div class="det"><table>
+          <tr><td>Não prevê resposta a um tratamento específico.</td></tr>
+          <tr><td>Não substitui estadiamento, imuno-histoquímica ou plataformas validadas.</td></tr>
+          <tr><td>Não foi validado fora do METABRIC, em nenhuma população.</td></tr>
+          <tr><td>Não se aplica a pacientes fora do perfil da coorte (mulheres, doença inicial, tratadas nos anos 1980–2000).</td></tr>
+        </table></div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-content">
+    <div class="footer-authorship">
+      <h4>Autoria &amp; Vínculo Institucional</h4>
+      <p style="font-size:13.5px;margin-bottom:8px"><strong>Autores:</strong> Beatriz Medeiros de Souza Oliveira Andrade<sup>1</sup>, Micael Davi Lima de Oliveira<sup>2</sup>, Roberto Alexandre Alves Barbosa Filho<sup>3</sup>, Toni Ricardo Martins<sup>4,5,6</sup></p>
+      <div style="font-size:12px;color:var(--papel-2);display:grid;gap:3px;margin-top:6px">
+        <div><b>1</b> – FM - UFAM – Faculdade de Medicina, Universidade Federal do Amazonas, Manaus, AM, Brasil.</div>
+        <div><b>2</b> - FCF - UFAM – Faculdade de Ciências Farmacêuticas, Universidade Federal do Amazonas, Manaus, AM, Brasil.</div>
+        <div><b>3</b> - IPEAM - Instituto de Pesquisas do Exército na Amazônia, Manaus, AM, Brasil.</div>
+        <div><b>4</b> - FCF – UFAM – Docente da Faculdade de Ciências Farmacêuticas, Universidade Federal do Amazonas, Manaus, AM, Brasil.</div>
+        <div><b>5</b> - PPGIBA – UFAM – Programa de Pós-graduação em Imunologia Básica e Aplicada, Universidade Federal do Amazonas, Manaus, AM, Brasil.</div>
+        <div><b>6</b> - IMT – LIM – USP - Instituto de Medicina Tropical, Laboratório de Virologia - LIM 52, Universidade de São Paulo, São Paulo, SP, Brasil.</div>
+      </div>
+    </div>
+    <p><span class="chip">METABRIC</span><span class="chip">n = 1.560</span><span class="chip">702 óbitos</span><span class="chip">semente 42</span><span class="chip">FCF/UFAM</span>
+    Dados: Curtis et al., <i>Nature</i> 2012; Pereira et al., <i>Nat Commun</i> 2016. Distribuição pública via cBioPortal.</p>
+    <p style="font-size:12.5px;color:var(--papel-3);margin:0">Todo o cálculo — inclusive florestas e gradient boosting — roda no seu navegador. Nenhum dado é enviado a servidor.</p>
+    <div style="margin-top:8px;padding-top:14px;border-top:1px solid var(--tinta-3);display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <span style="font-size:12px;color:var(--papel-2);margin-right:4px">Arquivos do projeto para download:</span>
+      <a href="exemplos_entrada.csv" download="exemplos_entrada_metabric.csv" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">📄 Planilha de Casos (CSV)</a>
+      <a href="modelos.json" download="modelos_metabric.json" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">🔬 Modelos Treinados (JSON)</a>
+      <a href="dados.js" download="dados.js" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">📑 Dataset Estruturado (JS)</a>
+    </div>
+  </div>
+</footer>
+
+<script src="dados.js"></script>
+<script>
+(function(){
+"use strict";
+var MU=window.MULTI, EX=window.EXEMPLOS;
+var SUB=MU.subtipo, SB=MU.sobrevida_base, ALG=MU.algoritmos, ROC=MU.roc;
+var expressao={}, temExpressao=false, exemploAtual=null;
+var conjunto="combinado", algoritmo="xgboost", ocultas={};
+var $=function(id){return document.getElementById(id);};
+var fmt=function(v,d){return Number(v).toFixed(d===undefined?3:d).replace(".",",");};
+var pct=function(v){return (v*100).toFixed(1).replace(".",",");};
+
+var INFO={
+ logistica:["Regressão logística","Traça uma fronteira linear: cada variável recebe um peso, os pesos são somados e a soma vira probabilidade pela função logística. É o modelo mais transparente — o peso de cada gene pode ser lido diretamente — e serve de referência: se um método complexo não a supera, a estrutura dos dados é essencialmente linear."],
+ random_forest:["Random Forest","Constrói centenas de árvores de decisão, cada uma treinada num reamostreio dos pacientes e vendo apenas um sorteio das variáveis a cada divisão. A predição é a média das árvores. Essa dupla aleatoriedade descorrelaciona os erros: cada árvore erra de um jeito diferente e a média cancela boa parte do ruído. Captura interações sem que se precise declará-las."],
+ extra_trees:["Extra Trees","Variante da floresta em que os pontos de corte de cada divisão são sorteados em vez de otimizados. Mais aleatoriedade aumenta o viés de cada árvore, mas reduz ainda mais a variância do conjunto. Costuma ir bem quando há muitas variáveis de sinal fraco — exatamente o caso dos 489 genes."],
+ gradient_boosting:["Gradient Boosting","Ao contrário da floresta, as árvores são construídas em sequência: cada nova árvore corrige o erro residual das anteriores e entra com peso pequeno (taxa de aprendizado). O ajuste é incremental e focado nos casos ainda mal previstos. Ganha precisão, mas é mais sensível a sobreajuste do que a floresta."],
+ xgboost:["XGBoost","Implementação otimizada do gradient boosting, com regularização explícita dos pesos das folhas, poda por ganho mínimo, amostragem de linhas e colunas a cada rodada e busca de cortes por histograma. É o boosting com freios — o que permite rodá-lo em 500 colunas sem decorar o treino."],
+ mlp:["Rede neural (MLP)","Perceptron multicamadas: as variáveis passam por uma camada oculta de neurônios com ativação não-linear e depois por uma saída logística, aprendendo combinações que nenhuma variável expressa isoladamente. Exige padronização e regularização forte — aqui a penalização foi ajustada por busca."]
+};
+var CORES={logistica:"#64748B",random_forest:"#0D9488",extra_trees:"#0284C7",
+           gradient_boosting:"#D97706",xgboost:"#DC2626",mlp:"#7C3AED"};
+var NOMES_CONJ={clinico:["Clínico","5 variáveis clínicas + subtipo"],
+                genes:["Expressão gênica","489 genes do painel"],
+                combinado:["Clínico + expressão","500 variáveis"]};
+
+function sigmoide(z){return 1/(1+Math.exp(-z));}
+function interpola(c,x){var X=c.x,Y=c.y;
+  if(x<=X[0])return Y[0]; if(x>=X[X.length-1])return Y[Y.length-1];
+  var lo=0,hi=X.length-1; while(hi-lo>1){var m=(lo+hi)>>1; if(X[m]<=x)lo=m; else hi=m;}
+  return Y[lo]+(x-X[lo])/(X[hi]-X[lo])*(Y[hi]-Y[lo]);}
+function desce(a,x){var i=0; while(a.l[i]!==-1){i = x[a.f[i]]<a.t[i]?a.l[i]:a.r[i];} return a.v[i];}
+function dec(v){var s=String(v===undefined||v===null?"":v).trim().replace(",",".");
+  if(s==="")return NaN; var n=parseFloat(s); return isNaN(n)?NaN:n;}
+function valoresClinicos(){return{
+  age_at_diagnosis:dec($("idade").value), neoplasm_histologic_grade:dec($("grau").value),
+  tumor_size:dec($("tamanho").value), lymph_nodes_examined_positive:dec($("linfo").value),
+  nottingham_prognostic_index:dec($("npi").value)};}
+function subSel(){var e=$("subtipo"); return e&&e.value?e.value:"";}
+
+function montaVetor(nomes){
+  var cl=valoresClinicos(), sub=subSel(), v=[], faltou=null;
+  for(var i=0;i<nomes.length;i++){var n=nomes[i];
+    if(n.indexOf("sub_")===0){v.push(n.slice(4)===sub?1:0);}
+    else if(n in cl){ if(isNaN(cl[n])){faltou=n;v.push(0);} else v.push(cl[n]); }
+    else {v.push((n in expressao)?expressao[n]:0);} }
+  return {v:v,faltou:faltou};
+}
+function prediz(){
+  var m=ALG[conjunto+"|"+algoritmo]; if(!m) return null;
+  if(conjunto!=="clinico" && !temExpressao) return {erro:"sem_expressao"};
+  var mv=montaVetor(m.variaveis);
+  if(mv.faltou) return {erro:"clinico_faltando"};
+  if(conjunto!=="genes" && !subSel()) return {erro:"sem_subtipo"};
+  var x=mv.v,b;
+  if(m.tipo==="linear"){var z=m.intercepto;
+    for(var i=0;i<x.length;i++) z+=((x[i]-m.media[i])/m.escala[i])*m.coef[i]; b=sigmoide(z);}
+  else if(m.tipo==="floresta"){var s=0;
+    for(var t=0;t<m.arvores.length;t++) s+=desce(m.arvores[t],x); b=s/m.arvores.length;}
+  else if(m.tipo==="boosting_sk"){var z2=m.base;
+    for(var t2=0;t2<m.arvores.length;t2++) z2+=m.lr*desce(m.arvores[t2],x); b=sigmoide(z2);}
+  else if(m.tipo==="boosting_xgb"){var z3=Math.log(m.base/(1-m.base));
+    for(var t3=0;t3<m.arvores.length;t3++) z3+=desce(m.arvores[t3],x); b=sigmoide(z3);}
+  else if(m.tipo==="mlp"){var h=[];
+    for(var j=0;j<x.length;j++) h.push((x[j]-m.media[j])/m.escala[j]);
+    for(var c=0;c<m.W.length;c++){var W=m.W[c],bb=m.b[c],o=[];
+      for(var k=0;k<bb.length;k++){var acc=bb[k];
+        for(var q=0;q<h.length;q++) acc+=W[q][k]*h[q]; o.push(acc>0?acc:0);} h=o;}
+    var zz=m.bout; for(var k2=0;k2<h.length;k2++) zz+=m.Wout[k2]*h[k2]; b=sigmoide(zz);}
+  return {bruto:b, calibrado:interpola(m.calibracao,b)};
+}
+function predizSubtipo(){
+  var g=SUB.genes,K=SUB.classes.length,sc=[];
+  for(var k=0;k<K;k++) sc.push(SUB.intercepto[k]);
+  for(var j=0;j<g.length;j++){var br=(g[j] in expressao)?expressao[g[j]]:0;
+    var x=(br-SUB.media[j])/SUB.escala[j]; if(x===0)continue;
+    for(var k2=0;k2<K;k2++) sc[k2]+=x*SUB.coef[k2][j];}
+  var mx=Math.max.apply(null,sc), ex=sc.map(function(s){return Math.exp(s-mx);});
+  var so=ex.reduce(function(a,b){return a+b;},0);
+  return ex.map(function(e){return e/so;});
+}
+
+EX.forEach(function(e){
+  var b=document.createElement("button"); b.className="ex"; b.type="button";
+  b.innerHTML="<b>"+e.rotulo+"</b><span>"+e.descricao+"</span>";
+  b.addEventListener("click",function(){
+    exemploAtual=e;
+    document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+    b.classList.add("sel");
+    $("idade").value=e.clinico.age_at_diagnosis.toFixed(1).replace(".",",");
+    $("grau").value=String(e.clinico.neoplasm_histologic_grade);
+    $("tamanho").value=String(e.clinico.tumor_size);
+    $("linfo").value=String(e.clinico.lymph_nodes_examined_positive);
+    $("npi").value=e.clinico.nottingham_prognostic_index.toFixed(2).replace(".",",");
+    $("subtipo").value=e.clinico.subtipo;
+    expressao={}; for(var k in e.expressao) expressao[k]=e.expressao[k];
+    temExpressao=true;
+    var st=$("statusGenes"); st.className="status ok";
+    st.textContent="489 genes carregados do caso \u201C"+e.rotulo+"\u201D.";
+    calcula(); mostraDesfecho();
+  });
+  $("exemplos").appendChild(b);
+});
+function mostraDesfecho(){
+  var s=$("statusDesfecho");
+  if(!exemploAtual){ s.innerHTML="<b>ℹ️ Desfecho real da coorte:</b> disponível ao carregar um caso de exemplo."; return; }
+  var d=exemploAtual.desfecho;
+  s.innerHTML="<b>📌 Desfecho real observado (caso \u201C"+exemploAtual.rotulo+"\u201D):</b> "+
+    (d.obito_10a?"óbito dentro de 10 anos":"sem óbito em 10 anos")+
+    " · seguimento de "+fmt(d.tempo_meses,1)+" meses · situação final: "+
+    (d.vital==="obito"?"óbito":"viva")+".";
+}
+
+function leExpressao(){
+  var txt=($("colar").value||"").trim(), st=$("statusGenes"), genes=SUB.genes;
+  if(!txt){ st.className="status erro"; st.textContent="Cole os valores no campo acima ou carregue um caso de exemplo."; return false; }
+  var pares=txt.match(/([a-zA-Z0-9_\-]+)\s*[:=]\s*([+-]?\d+(?:[.,]\d+)?)/g);
+  if(pares&&pares.length){
+    var novo={},n=0,desc=[];
+    pares.forEach(function(p){
+      var m=p.match(/([a-zA-Z0-9_\-]+)\s*[:=]\s*([+-]?\d+(?:[.,]\d+)?)/);
+      var g=m[1].toLowerCase();
+      if(genes.indexOf(g)===-1){desc.push(m[1]);return;}
+      novo[g]=parseFloat(m[2].replace(",",".")); n++;});
+    if(!n){ st.className="status erro"; st.textContent="Nenhum gene reconhecido. Use nomes do painel, ex.: aurka=1,2"; return false; }
+    expressao=novo; temExpressao=true; exemploAtual=null;
+    document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+    st.className="status ok";
+    st.textContent=n+" gene(s) definidos; os demais na média da coorte (z = 0)."+
+      (desc.length?" Ignorados: "+desc.slice(0,4).join(", ")+".":"");
+    return true;
+  }
+  var linhas=txt.split(/\r?\n/).filter(function(l){return l.trim().length;});
+  var vals=linhas[linhas.length-1].split(/[\s,;\t]+/)
+    .map(function(s){return dec(String(s).replace(/"/g,""));})
+    .filter(function(v){return !isNaN(v);});
+  if(vals.length>genes.length) vals=vals.slice(vals.length-genes.length);
+  if(vals.length!==genes.length){
+    st.className="status erro";
+    st.textContent="Encontrei "+vals.length+" números; são necessários exatamente "+genes.length+
+      " valores de expressão. Cole apenas a faixa de genes.";
+    return false;
+  }
+  var nv={}; genes.forEach(function(g,i){nv[g]=vals[i];});
+  expressao=nv; temExpressao=true; exemploAtual=null;
+  document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+  st.className="status ok"; st.textContent=genes.length+" genes lidos na ordem da planilha.";
+  return true;
+}
+$("btPredizerGenes").addEventListener("click",function(){
+  if(leExpressao()){ calcula(); mostraDesfecho();
+    $("pct").scrollIntoView({behavior:"smooth",block:"nearest"}); }
+});
+$("btZerar").addEventListener("click",function(){
+  expressao={}; temExpressao=false; exemploAtual=null; $("colar").value="";
+  document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+  $("statusGenes").className="status"; $("statusGenes").textContent="Nenhum valor de expressão carregado.";
+  calcula(); mostraDesfecho();
+});
+$("btCarregarCsv").addEventListener("click",function(){$("arquivoCsv").click();});
+$("arquivoCsv").addEventListener("change",function(ev){
+  var f=ev.target.files&&ev.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){ $("colar").value=String((e.target&&e.target.result)||"");
+    if(leExpressao()){ calcula(); mostraDesfecho(); } };
+  r.readAsText(f); ev.target.value="";
+});
+
+var selSub=$("subtipo");
+selSub.innerHTML='<option value="">— não informado —</option>';
+SB.classes_subtipo.forEach(function(c){
+  var o=document.createElement("option"); o.value=c; o.textContent=c; selSub.appendChild(o);});
+
+function montaConjunto(){
+  var el=$("seletorConjunto"); el.innerHTML="";
+  ["clinico","genes","combinado"].forEach(function(k){
+    var melhor=0,nomeMelhor="";
+    Object.keys(ALG).forEach(function(ch){ if(ch.indexOf(k+"|")===0 && ALG[ch].auc>melhor){
+      melhor=ALG[ch].auc; nomeMelhor=INFO[ch.split("|")[1]][0]; }});
+    var l=document.createElement("label");
+    l.className="mod"+(k===conjunto?" on":"");
+    l.innerHTML='<input type="radio" name="conj" value="'+k+'" '+(k===conjunto?"checked":"")+'>'+
+      '<span><span class="t">'+NOMES_CONJ[k][0]+'</span><span class="d">'+NOMES_CONJ[k][1]+'</span></span>'+
+      '<span class="auc">'+fmt(melhor)+'<small>melhor: '+nomeMelhor+'</small></span>';
+    l.querySelector("input").addEventListener("change",function(){
+      conjunto=k; montaConjunto(); montaAlg(); desenhaRoc(); explicacoes(); tabela(); calcula();});
+    el.appendChild(l);});
+  var bc=$("badgeClinico");
+  if(conjunto==="genes"){ bc.textContent="Não usados neste modelo"; bc.className="badge-opc"; }
+  else { bc.textContent="Necessários no modelo atual"; bc.className="badge-opc req"; }
+}
+function montaAlg(){
+  var el=$("seletorAlg"); el.innerHTML="";
+  var lista=Object.keys(ALG).filter(function(c){return c.indexOf(conjunto+"|")===0;})
+    .sort(function(a,b){return ALG[b].auc-ALG[a].auc;});
+  if(lista.map(function(c){return c.split("|")[1];}).indexOf(algoritmo)===-1)
+    algoritmo=lista[0].split("|")[1];
+  lista.forEach(function(ch){
+    var m=ALG[ch],k=ch.split("|")[1];
+    var l=document.createElement("label");
+    l.className="mod"+(k===algoritmo?" on":"");
+    l.innerHTML='<input type="radio" name="alg" value="'+k+'" '+(k===algoritmo?"checked":"")+'>'+
+      '<span><span class="t">'+INFO[k][0]+'</span><span class="d">'+m.variaveis.length+
+      ' variáveis · IC 95% '+fmt(m.ic_inf)+'–'+fmt(m.ic_sup)+'</span></span>'+
+      '<span class="auc">AUC '+fmt(m.auc)+'</span>';
+    l.querySelector("input").addEventListener("change",function(){
+      algoritmo=k; montaAlg(); desenhaRoc(); explicacoes(); tabela(); calcula();});
+    el.appendChild(l);});
+  var m=ALG[conjunto+"|"+algoritmo];
+  var melhorG=Object.keys(ALG).reduce(function(a,b){return ALG[a].auc>ALG[b].auc?a:b;});
+  var t="Hiperparâmetros por busca aleatória dentro da validação cruzada: "+
+    JSON.stringify(m.hiper).replace(/[{}"]/g,"").replace(/m__/g,"")+". Calibração isotônica: Brier "+
+    fmt(m.brier)+" → "+fmt(m.brier_calibrado)+", Hosmer-Lemeshow p = "+fmt(m.hosmer_p,2)+".";
+  if(conjunto+"|"+algoritmo!==melhorG){
+    var mg=ALG[melhorG];
+    t+=" O melhor modelo do painel é "+INFO[melhorG.split("|")[1]][0]+" sobre "+
+      NOMES_CONJ[melhorG.split("|")[0]][0].toLowerCase()+" (AUC "+fmt(mg.auc)+")";
+    t+= (m.ic_sup>=mg.ic_inf)?", mas os intervalos se sobrepõem — a diferença não é conclusiva.":
+                              ", e a diferença é estatisticamente clara.";
+  }
+  $("notaAlg").textContent=t;
+}
+
+function desenhaRoc(){
+  var L=40,B=250,W=245,p=[];
+  p.push('<rect x="'+L+'" y="0" width="'+W+'" height="'+B+'" fill="#F8FAFC" stroke="#E2E8F0"/>');
+  for(var i=1;i<5;i++){var g=L+W*i/5,h=B*i/5;
+    p.push('<line x1="'+g+'" y1="0" x2="'+g+'" y2="'+B+'" stroke="#E2E8F0" stroke-width=".6"/>');
+    p.push('<line x1="'+L+'" y1="'+h+'" x2="'+(L+W)+'" y2="'+h+'" stroke="#E2E8F0" stroke-width=".6"/>');}
+  p.push('<line x1="'+L+'" y1="'+B+'" x2="'+(L+W)+'" y2="0" stroke="#94A3B8" stroke-width="1" stroke-dasharray="4,3"/>');
+  Object.keys(ROC).filter(function(c){return c.indexOf(conjunto+"|")===0;})
+    .sort(function(a,b){return ALG[a].auc-ALG[b].auc;})
+    .forEach(function(ch){
+      var k=ch.split("|")[1]; if(ocultas[ch]) return;
+      var r=ROC[ch],d="";
+      for(var i=0;i<r.fpr.length;i++) d+=(i?"L":"M")+(L+r.fpr[i]*W).toFixed(1)+","+(B-r.tpr[i]*B).toFixed(1);
+      var sel=(k===algoritmo);
+      p.push('<path d="'+d+'" fill="none" stroke="'+CORES[k]+'" stroke-width="'+(sel?2.8:1.3)+
+             '" opacity="'+(sel?1:.5)+'" stroke-linejoin="round"/>');});
+  p.push('<text x="'+(L+W/2)+'" y="280" fill="#64748B" font-size="10.5" text-anchor="middle" font-family="IBM Plex Sans">1 − especificidade</text>');
+  p.push('<text x="13" y="'+(B/2)+'" fill="#64748B" font-size="10.5" text-anchor="middle" font-family="IBM Plex Sans" transform="rotate(-90 13 '+(B/2)+')">sensibilidade</text>');
+  p.push('<text x="'+L+'" y="266" fill="#64748B" font-size="9.5" text-anchor="middle" font-family="IBM Plex Mono">0</text>');
+  p.push('<text x="'+(L+W)+'" y="266" fill="#64748B" font-size="9.5" text-anchor="middle" font-family="IBM Plex Mono">1</text>');
+  p.push('<text x="'+(L-7)+'" y="'+B+'" fill="#64748B" font-size="9.5" text-anchor="end" font-family="IBM Plex Mono">0</text>');
+  p.push('<text x="'+(L-7)+'" y="9" fill="#64748B" font-size="9.5" text-anchor="end" font-family="IBM Plex Mono">1</text>');
+  $("roc").innerHTML=p.join("");
+  var lg=$("legRoc"); lg.innerHTML="";
+  Object.keys(ALG).filter(function(c){return c.indexOf(conjunto+"|")===0;})
+    .sort(function(a,b){return ALG[b].auc-ALG[a].auc;})
+    .forEach(function(ch){
+      var k=ch.split("|")[1],m=ALG[ch];
+      var it=document.createElement("div");
+      it.className="it"+(ocultas[ch]?" off":"")+(k===algoritmo?" atual":"");
+      it.innerHTML='<span class="sw" style="background:'+CORES[k]+'"></span><span class="nm">'+
+        INFO[k][0]+'</span><span class="vl">'+fmt(m.auc)+'</span>';
+      it.addEventListener("click",function(){ocultas[ch]=!ocultas[ch];desenhaRoc();});
+      lg.appendChild(it);});
+}
+
+function barraAUC(nome,o,foco){
+  var esc=function(v){return ((v-0.4)/0.5)*100;}, ruim=o.confiavel?"":" ruim";
+  return '<div class="linha-auc'+(foco?" foco":"")+'"><span>'+nome+'</span><span class="barra">'+
+    '<i class="acaso" style="left:'+esc(0.5)+'%"></i>'+
+    '<i class="ic'+ruim+'" style="left:'+esc(o.ic_inf)+'%;width:'+Math.max(esc(o.ic_sup)-esc(o.ic_inf),1)+'%"></i>'+
+    '<i class="pt'+ruim+'" style="left:'+esc(o.auc)+'%"></i></span>'+
+    '<span class="v">'+fmt(o.auc)+' ['+fmt(o.ic_inf)+'–'+fmt(o.ic_sup)+']</span></div>';
+}
+function escalas(sub){
+  $("escalaSubtipo").innerHTML=Object.keys(SB.confiabilidade_por_subtipo)
+    .map(function(k){return barraAUC(k,SB.confiabilidade_por_subtipo[k],k===sub);}).join("");
+  $("escalaEstagio").innerHTML=Object.keys(SB.confiabilidade_por_estagio)
+    .map(function(k){return barraAUC("Estágio "+k,SB.confiabilidade_por_estagio[k],false);}).join("");
+}
+
+function calcula(){
+  var sub=subSel(); escalas(sub);
+  var r=prediz(), pe=$("pct"), ve=$("veredito"), vt=$("vTexto"), ic=ve.querySelector(".ic");
+  $("legMeio").textContent="cortes em "+pct(SB.tercis.corte_baixo)+"% e "+pct(SB.tercis.corte_alto)+"%";
+  function indisp(msg){
+    pe.className="numero vazio"; pe.textContent="Aguardando dados";
+    document.querySelectorAll(".seg").forEach(function(s){s.classList.remove("on");});
+    $("marca").style.left="-10px"; $("tabTercil").innerHTML="";
+    ve.className="veredito neutro"; ic.textContent="◎"; vt.innerHTML=msg;
+  }
+  if(!r){indisp("Modelo não encontrado.");return;}
+  if(r.erro==="sem_expressao"){indisp("<b>Faltam valores de expressão gênica.</b> Este conjunto usa os 489 genes do painel. Carregue um caso de exemplo ou cole os z-scores — sem isso o cálculo assumiria um paciente médio que não existe.");return;}
+  if(r.erro==="clinico_faltando"){indisp("<b>Faltam dados clínicos.</b> Preencha idade, grau, tamanho, linfonodos e NPI no painel retrátil, ou escolha o conjunto <i>Expressão gênica</i>. Campo em branco não é tratado como zero.");return;}
+  if(r.erro==="sem_subtipo"){indisp("<b>Informe o subtipo molecular.</b> Ele entra como variável neste modelo e não há valor padrão razoável.");return;}
+
+  var p=r.calibrado;
+  pe.className="numero"; pe.innerHTML=pct(p)+"<small>%</small>";
+  var t=SB.tercis, grupo=p<t.corte_baixo?"baixo":(p<t.corte_alto?"medio":"alto");
+  document.querySelectorAll(".seg").forEach(function(s){s.classList.toggle("on",s.dataset.g===grupo);});
+  $("marca").style.left=Math.min(Math.max(p*100,0),100)+"%";
+  var g=t.grupos[grupo];
+  $("tabTercil").innerHTML='<tr><th>Grupo de risco</th><th>Óbitos em 10 anos observados</th><th>Sobrevida global mediana</th></tr>'+
+    '<tr><td>'+(grupo==="medio"?"Médio":grupo.charAt(0).toUpperCase()+grupo.slice(1))+
+    ' <span class="chip">n = '+g.n+'</span></td><td class="n">'+pct(g.obito10_obs)+'%</td>'+
+    '<td class="n">'+fmt(g.mediana_os,1)+' meses</td></tr>';
+
+  var c=sub?SB.confiabilidade_por_subtipo[sub]:null, mm=ALG[conjunto+"|"+algoritmo];
+  if(c&&!c.confiavel){
+    ve.className="veredito nao"; ic.textContent="⊘";
+    vt.innerHTML="<b>Não confiável no subtipo "+sub+".</b> Nesse grupo (n = "+c.n+") o IC 95% da discriminação vai de "+
+      fmt(c.ic_inf)+" a "+fmt(c.ic_sup)+" e inclui 0,5 — a predição não se distingue de um sorteio. Ignore o número acima.";
+  } else if(c){
+    ve.className="veredito ok"; ic.textContent="◎";
+    vt.innerHTML="<b>Ordenação de risco utilizável em "+sub+"</b> (AUC "+fmt(c.auc)+", IC 95% "+
+      fmt(c.ic_inf)+"–"+fmt(c.ic_sup)+", n = "+c.n+"). Modelo em uso: "+INFO[algoritmo][0]+" sobre "+
+      NOMES_CONJ[conjunto][0].toLowerCase()+", AUC global "+fmt(mm.auc)+". Use para ordenar casos, não como probabilidade individual.";
+  } else {
+    ve.className="veredito neutro"; ic.textContent="◎";
+    vt.innerHTML="Informe o subtipo molecular para ver o veredito de confiabilidade daquele grupo.";
+  }
+
+  var alvo=$("subtipoSaida"),pr=$("probs"),cs=$("confSubtipo");
+  if(!temExpressao){
+    alvo.textContent="Carregue valores de expressão gênica para classificar o subtipo.";
+    pr.innerHTML=""; cs.textContent="";
+  } else {
+    var probs=predizSubtipo();
+    var ord=probs.map(function(v,i){return [v,SUB.classes[i]];}).sort(function(a,b){return b[0]-a[0];});
+    var top=ord[0];
+    alvo.innerHTML="Subtipo molecular predito: <b>"+top[1]+"</b>"+
+      (sub&&top[1]!==sub?" <span style='color:var(--alerta);font-weight:600'>— diverge do informado ("+sub+")</span>":"");
+    pr.innerHTML=ord.map(function(o,i){return '<div class="prob'+(i===0?" top":"")+'"><span>'+o[1]+
+      '</span><span class="pb"><i style="width:'+(o[0]*100).toFixed(1)+'%"></i></span>'+
+      '<span class="v dado">'+(o[0]*100).toFixed(0)+'%</span></div>';}).join("");
+    var msg="Confiança "+pct(top[0])+"%. Acerto histórico da classe "+top[1]+": "+pct(SUB.acerto_por_classe[top[1]])+"%.";
+    if(top[0]<0.6) msg+=" Confiança baixa: nessa faixa o classificador acerta pouco mais que a metade das vezes.";
+    if(top[1]==="Normal") msg+=" O grupo Normal-like tem o pior desempenho e pode refletir amostra com baixa celularidade tumoral.";
+    cs.className="status"+(top[0]<0.6?" erro":""); cs.textContent=msg;
+  }
+}
+
+function explicacoes(){
+  var el=$("explica"); el.innerHTML="";
+  Object.keys(INFO).forEach(function(k){
+    var m=ALG[conjunto+"|"+k], d=document.createElement("div");
+    d.className="alg"+(k===algoritmo?" atual":"");
+    d.innerHTML="<h4>"+INFO[k][0]+"</h4><p>"+INFO[k][1]+"</p>"+
+      (m?'<div class="met">Neste conjunto: AUC '+fmt(m.auc)+' (IC 95% '+fmt(m.ic_inf)+'–'+fmt(m.ic_sup)+
+         ') · Brier '+fmt(m.brier_calibrado)+'</div>'
+        :'<div class="met" style="color:var(--papel-3);font-weight:400">Não treinado neste conjunto — custo proibitivo em 489 colunas; o XGBoost representa a família de boosting.</div>');
+    el.appendChild(d);});
+}
+function tabela(){
+  var chaves=Object.keys(ALG).sort(function(a,b){return ALG[b].auc-ALG[a].auc;});
+  $("tabelaTudo").innerHTML='<table><tr><th>Conjunto</th><th>Algoritmo</th><th>Var.</th><th>AUC</th>'+
+    '<th>IC 95%</th><th>Brier</th><th>H-L</th></tr>'+
+    chaves.map(function(ch){var m=ALG[ch],k=ch.split("|")[1];
+      return '<tr'+(ch===conjunto+"|"+algoritmo?' class="destaque"':'')+'><td>'+NOMES_CONJ[m.conjunto][0]+
+        '</td><td>'+INFO[k][0]+'</td><td class="n">'+m.variaveis.length+'</td><td class="n">'+fmt(m.auc)+
+        '</td><td class="n">'+fmt(m.ic_inf)+'–'+fmt(m.ic_sup)+'</td><td class="n">'+fmt(m.brier_calibrado)+
+        '</td><td class="n">'+fmt(m.hosmer_p,2)+'</td></tr>';}).join("")+'</table>'+
+    '<p class="nota">Todos calibrados por regressão isotônica ajustada dentro da validação cruzada. '+
+    'A reimplementação em JavaScript foi conferida contra o scikit-learn: erro máximo de 3×10⁻⁶.</p>';
+}
+$("calibracao").innerHTML='<table><tr><th>Risco previsto</th><th>n</th><th>Previsto</th><th>Observado</th></tr>'+
+  SB.calibracao.map(function(r){return '<tr><td class="dado">'+r.faixa+'</td><td class="n">'+r.n+
+    '</td><td class="n">'+pct(r.previsto)+'%</td><td class="n">'+pct(r.observado)+'%</td></tr>';}).join("")+
+  '</table><p class="nota">Antes da correção isotônica o modelo era grosseiramente descalibrado — atribuía 7% de risco a grupos onde morriam 25%. A tabela mostra o estado após a correção.</p>';
+
+["idade","grau","tamanho","linfo","npi","subtipo"].forEach(function(id){
+  var e=$(id); if(!e) return;
+  var f=function(){ if(exemploAtual){exemploAtual=null;
+    document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");}); mostraDesfecho();}
+    calcula(); };
+  e.addEventListener("change",f); e.addEventListener("input",f);});
+
+montaConjunto(); montaAlg(); desenhaRoc(); explicacoes(); tabela(); mostraDesfecho(); calcula();
+})();
+</script>
+</body>
+</html>

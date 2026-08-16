@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 78" role="img" aria-label="UFAM">
+<rect width="80" height="78" rx="6" fill="#F0F9FF" stroke="#BAE6FD"/>
+<text x="40" y="34" text-anchor="middle" font-family="IBM Plex Sans Condensed, sans-serif" font-size="20" font-weight="700" fill="#0369A1">UFAM</text>
+<text x="40" y="52" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="8" fill="#0284C7">FCF</text>
+<line x1="18" y1="40" x2="62" y2="40" stroke="#BAE6FD" stroke-width="1.5"/>
+</svg>

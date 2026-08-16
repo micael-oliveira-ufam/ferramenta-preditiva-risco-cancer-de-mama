@@ -1,0 +1,17 @@
+@page { size: A4; margin: 2cm 1.8cm; }
+body { font-family: "DejaVu Sans", sans-serif; font-size: 9.5pt; line-height: 1.45; color: #0F172A; }
+h1 { font-size: 19pt; color: #0369A1; border-bottom: 2px solid #0284C7; padding-bottom: 6px; margin-top: 0; }
+h2 { font-size: 13pt; color: #0369A1; margin-top: 20px; border-bottom: 1px solid #E2E8F0; padding-bottom: 3px; }
+h3 { font-size: 11pt; color: #334155; margin-top: 14px; }
+h4 { font-size: 10pt; color: #334155; }
+table { border-collapse: collapse; width: 100%; font-size: 7.8pt; margin: 8px 0 12px; }
+th { background: #F1F5F9; color: #334155; text-align: left; padding: 4px 5px; border: 1px solid #E2E8F0; font-size: 7.5pt; }
+td { padding: 4px 5px; border: 1px solid #E2E8F0; }
+tr:nth-child(even) td { background: #F8FAFC; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8pt; background: #F1F5F9; padding: 1px 3px; }
+pre { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px; font-size: 7.6pt; overflow-x: auto; }
+pre code { background: none; }
+blockquote { border-left: 3px solid #0284C7; margin-left: 0; padding-left: 12px; color: #334155; }
+strong { color: #0F172A; }
+hr { border: 0; border-top: 1px solid #E2E8F0; margin: 18px 0; }
+a { color: #0284C7; }

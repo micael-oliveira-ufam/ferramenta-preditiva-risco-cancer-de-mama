@@ -1,0 +1,8 @@
+# Publicacao como Cloudflare Worker com assets estaticos.
+# Alternativa (mais simples): Cloudflare Pages, sem este arquivo — ver README.
+name = "painel-metabric"
+compatibility_date = "2026-08-01"
+
+[assets]
+directory = "."
+not_found_handling = "single-page-application"

@@ -1,0 +1,7 @@
+subtipo,genes_testados,signif_FDR,signif_FDR_e_efeito,super,sub
+Basal,489,300,151,89,62
+Her2,489,248,63,36,27
+LumA,489,287,77,30,47
+LumB,489,308,92,33,59
+Normal,489,201,78,38,40
+claudin.low,489,269,107,62,45

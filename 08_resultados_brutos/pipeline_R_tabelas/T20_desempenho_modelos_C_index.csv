@@ -1,0 +1,6 @@
+modelo,n_genes,C_index_treino,C_index_validacao
+Assinatura gênica LASSO (lambda.min),65,0.6829,0.5877
+Assinatura gênica LASSO (lambda.1se),12,0.623,0.5851
+"Clínico (idade, grau, tamanho, linfonodo, subtipo)",0,0.657,0.6608
+Combinado (clínico + assinatura lambda.min),65,0.7114,0.6514
+Combinado (clínico + assinatura lambda.1se),12,0.6749,0.6666
