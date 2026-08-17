@@ -1,5 +1,6 @@
-
 # **Projeto:** Estratificação de Risco no Câncer de Mama: Aprendizado de Máquina na Inferência de Assinaturas Gênicas de Sobrevida
+
+**Ferramenta Online:** [https://painel-metabric-cancer-de-mama.ai.studio/](https://painel-metabric-cancer-de-mama.ai.studio/)
 
 **Autores:**
 Beatriz Medeiros de Souza Oliveira Andrade¹, Micael Davi Lima de Oliveira², Roberto Alexandre Alves Barbosa Filho³, Toni Ricardo Martins⁴,⁵,⁶
@@ -237,7 +238,9 @@ O modelo treinado é exportado como coeficientes e arrays de nós de árvore em 
 
 Para o **XGBoost**, `base` é a prevalência real (≈ 0,45), não 0,5 — ela é lida de `booster.save_config()`. Usar 0,5 produz erro de 4,8×10⁻² na probabilidade.
 
-**Abrir a plataforma:** basta abrir `07_plataforma/index.html` no navegador; funciona offline, sem servidor. Para publicar: `wrangler pages deploy 07_plataforma`.
+**Acesso online:** A ferramenta já está disponível e hospedada em: [https://painel-metabric-cancer-de-mama.ai.studio/](https://painel-metabric-cancer-de-mama.ai.studio/).
+
+**Abrir a plataforma localmente:** basta abrir `07_plataforma/index.html` no navegador; funciona offline, sem servidor. Para publicar: `wrangler pages deploy 07_plataforma`.
 
 ---
 
