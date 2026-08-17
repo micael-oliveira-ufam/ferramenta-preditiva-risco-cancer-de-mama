@@ -35,9 +35,14 @@ header{border-bottom:1px solid var(--linha);background:linear-gradient(180deg,#F
 h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;font-size:clamp(24px,3.8vw,36px);line-height:1.1;letter-spacing:-.015em;margin:6px 0 0;color:var(--papel)}
 h1 .sub{display:inline-block;color:var(--ufam-azul);font-size:.42em;letter-spacing:.18em;text-transform:uppercase;font-weight:700;background:var(--ufam-azul-bg);padding:2px 8px;border-radius:4px;border:1px solid var(--ufam-azul-borda);margin-right:8px;vertical-align:middle}
 .origem{color:var(--papel-2);font-size:13.5px;max-width:58ch;margin:6px 0 0}
-.selo{border:1px solid var(--linha);border-radius:var(--r);padding:10px 16px;background:#FFF;box-shadow:var(--sombra);text-align:right}
-.selo b{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--papel-3);font-weight:600}
-.selo span{font-size:16px;font-weight:700;color:var(--ufam-azul-escuro)}
+.header-actions-group{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+@media(max-width:780px){.header-actions-group{align-items:flex-start;width:100%}}
+.btn-github-topo{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:#FFF;border:1px solid var(--tinta-3);border-radius:var(--r);color:var(--papel);font-size:13px;font-weight:600;text-decoration:none;box-shadow:var(--sombra);transition:all .15s ease}
+.btn-github-topo:hover{border-color:var(--ufam-azul);background:var(--ufam-azul-bg);color:var(--ufam-azul-escuro);box-shadow:0 2px 4px rgba(2,132,199,.12);text-decoration:none}
+.btn-github-topo svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+.selo{border:1px solid var(--linha);border-radius:var(--r);padding:8px 14px;background:#FFF;box-shadow:var(--sombra);text-align:right}
+.selo b{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--papel-3);font-weight:600}
+.selo span{font-size:15px;font-weight:700;color:var(--ufam-azul-escuro)}
 
 .bloco-autoria{background:#FFF;border-bottom:1px solid var(--tinta-3);padding:16px 0}
 .autoria-cabecalho{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:12px}
@@ -194,7 +199,7 @@ footer a:hover{text-decoration:underline}
 <header>
   <div class="wrap top">
     <div class="brand-group">
-      <img src="ufam_logo.svg" alt="Marca da Universidade Federal do Amazonas (UFAM)" class="logo-ufam" width="80" height="78">
+      <img src="https://edoc.ufam.edu.br/bitstream/123456789/4819/7/marca_ufam_vetor_positivo.png" onerror="this.onerror=null; this.src='ufam_logo.svg'" alt="Marca Oficial da Universidade Federal do Amazonas (UFAM)" class="logo-ufam" width="80" height="78">
       <div class="inst-meta">
         <span class="inst-title">Universidade Federal do Amazonas · UFAM</span>
         <span class="inst-dept">Faculdade de Ciências Farmacêuticas</span>
@@ -203,7 +208,13 @@ footer a:hover{text-decoration:underline}
         com seleção de algoritmo, curvas ROC de validação e veredito de confiabilidade por subtipo.</p>
       </div>
     </div>
-    <div class="selo"><b>Finalidade</b><span>Pesquisa &amp; Ensino</span></div>
+    <div class="header-actions-group">
+      <a href="https://github.com/micael-oliveira-ufam/ferramenta-preditiva-risco-cancer-de-mama/" target="_blank" rel="noopener noreferrer" class="btn-github-topo" title="Acessar o repositório do projeto no GitHub">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+        <span>Repositório GitHub</span>
+      </a>
+      <div class="selo"><b>Finalidade</b><span>Pesquisa &amp; Ensino</span></div>
+    </div>
   </div>
 </header>
 
@@ -247,15 +258,16 @@ footer a:hover{text-decoration:underline}
         <label for="colar">Cole os z-scores dos genes (vírgula, ponto-e-vírgula, tabulação ou espaço) ou pares gene=valor:</label>
         <textarea id="colar" placeholder="Exemplo de pares: aurka=1,2, stat5a=-0,8, gsk3b=0,4 (aceita decimais em vírgula ou ponto, ou os 489 valores na ordem da planilha)"></textarea>
         <div class="acoes">
-          <button type="button" class="bt" id="btPredizerGenes">🔬 Ler valores e predizer</button>
+          <button type="button" class="bt" id="btPredizerGenes">🔬 Predizer desfecho por expressão gênica</button>
+          <button type="button" class="bt sec" id="btLerExpressao">📊 Ler valores de expressão gênica</button>
           <button type="button" class="bt sec" id="btZerar">Limpar expressão</button>
         </div>
         <div class="status" id="statusGenes">Nenhum valor de expressão carregado.</div>
       </div>
     </section>
 
-    <details class="painel-recolhivel" id="detalhesExemplos" open>
-      <summary><span>📂 Casos de exemplo da coorte &amp; Planilha CSV</span><span class="badge-opc">Clique para recolher</span></summary>
+    <details class="painel-recolhivel" id="detalhesExemplos">
+      <summary><span>📂 Casos de exemplo da coorte &amp; Planilha CSV</span><span class="badge-opc">Opcional</span></summary>
       <div class="corpo">
         <div class="exemplos" id="exemplos"></div>
         <p class="nota">Pacientes reais da coorte METABRIC, com os 489 valores de expressão gênica e os dados clínicos correspondentes. Carregar um caso preenche tudo de uma vez.</p>
@@ -402,7 +414,8 @@ footer a:hover{text-decoration:underline}
     Dados: Curtis et al., <i>Nature</i> 2012; Pereira et al., <i>Nat Commun</i> 2016. Distribuição pública via cBioPortal.</p>
     <p style="font-size:12.5px;color:var(--papel-3);margin:0">Todo o cálculo — inclusive florestas e gradient boosting — roda no seu navegador. Nenhum dado é enviado a servidor.</p>
     <div style="margin-top:8px;padding-top:14px;border-top:1px solid var(--tinta-3);display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-      <span style="font-size:12px;color:var(--papel-2);margin-right:4px">Arquivos do projeto para download:</span>
+      <span style="font-size:12px;color:var(--papel-2);margin-right:4px">Arquivos e código-fonte:</span>
+      <a href="https://github.com/micael-oliveira-ufam/ferramenta-preditiva-risco-cancer-de-mama/" target="_blank" rel="noopener noreferrer" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">🐙 Repositório GitHub</a>
       <a href="exemplos_entrada.csv" download="exemplos_entrada_metabric.csv" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">📄 Planilha de Casos (CSV)</a>
       <a href="modelos.json" download="modelos_metabric.json" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">🔬 Modelos Treinados (JSON)</a>
       <a href="dados.js" download="dados.js" class="bt sec" style="font-size:11.5px;padding:4px 10px;text-decoration:none">📑 Dataset Estruturado (JS)</a>
@@ -417,7 +430,7 @@ footer a:hover{text-decoration:underline}
 var MU=window.MULTI, EX=window.EXEMPLOS;
 var SUB=MU.subtipo, SB=MU.sobrevida_base, ALG=MU.algoritmos, ROC=MU.roc;
 var expressao={}, temExpressao=false, exemploAtual=null;
-var conjunto="combinado", algoritmo="xgboost", ocultas={};
+var conjunto="genes", algoritmo="xgboost", ocultas={};
 var $=function(id){return document.getElementById(id);};
 var fmt=function(v,d){return Number(v).toFixed(d===undefined?3:d).replace(".",",");};
 var pct=function(v){return (v*100).toFixed(1).replace(".",",");};
@@ -448,7 +461,19 @@ function valoresClinicos(){return{
   age_at_diagnosis:dec($("idade").value), neoplasm_histologic_grade:dec($("grau").value),
   tumor_size:dec($("tamanho").value), lymph_nodes_examined_positive:dec($("linfo").value),
   nottingham_prognostic_index:dec($("npi").value)};}
-function subSel(){var e=$("subtipo"); return e&&e.value?e.value:"";}
+function subPredito(){
+  if(!temExpressao) return "";
+  var probs=predizSubtipo();
+  var topIdx=0;
+  for(var i=1;i<probs.length;i++){ if(probs[i]>probs[topIdx]) topIdx=i; }
+  return SUB.classes[topIdx];
+}
+function subSel(){
+  var e=$("subtipo");
+  if(e && e.value) return e.value;
+  if(temExpressao) return subPredito();
+  return "";
+}
 
 function montaVetor(nomes){
   var cl=valoresClinicos(), sub=subSel(), v=[], faltou=null;
@@ -523,45 +548,183 @@ function mostraDesfecho(){
     (d.vital==="obito"?"óbito":"viva")+".";
 }
 
+function parseCSVLine(line, sep){
+  var result=[], cur="", inQuote=false;
+  for(var i=0;i<line.length;i++){
+    var c=line[i];
+    if(c==='"'){inQuote=!inQuote;}
+    else if(c===sep && !inQuote){result.push(cur.trim()); cur="";}
+    else{cur+=c;}
+  }
+  result.push(cur.trim());
+  return result;
+}
+
 function leExpressao(){
   var txt=($("colar").value||"").trim(), st=$("statusGenes"), genes=SUB.genes;
   if(!txt){ st.className="status erro"; st.textContent="Cole os valores no campo acima ou carregue um caso de exemplo."; return false; }
+  
+  // 1. JSON estruturado
+  if(txt.charAt(0)==="{" && txt.charAt(txt.length-1)==="}"){
+    try {
+      var obj=JSON.parse(txt);
+      var target=obj.expressao||obj, nvJson={}, cntJson=0;
+      for(var k in target){
+        var gl=String(k).toLowerCase().trim();
+        if(genes.indexOf(gl)!==-1){
+          var vj=parseFloat(String(target[k]).replace(",","."));
+          if(!isNaN(vj)){ nvJson[gl]=vj; cntJson++; }
+        }
+      }
+      if(cntJson>0){
+        expressao=nvJson; temExpressao=true; exemploAtual=null;
+        document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+        if(obj.clinico){
+          if(obj.clinico.age_at_diagnosis!==undefined) $("idade").value=String(obj.clinico.age_at_diagnosis).replace(".",",");
+          if(obj.clinico.neoplasm_histologic_grade!==undefined) $("grau").value=String(obj.clinico.neoplasm_histologic_grade);
+          if(obj.clinico.tumor_size!==undefined) $("tamanho").value=String(obj.clinico.tumor_size).replace(".",",");
+          if(obj.clinico.lymph_nodes_examined_positive!==undefined) $("linfo").value=String(obj.clinico.lymph_nodes_examined_positive).replace(".",",");
+          if(obj.clinico.nottingham_prognostic_index!==undefined) $("npi").value=String(obj.clinico.nottingham_prognostic_index).replace(".",",");
+          if(obj.clinico.subtipo) $("subtipo").value=obj.clinico.subtipo;
+        }
+        var spJ=subPredito();
+        if(spJ && !$("subtipo").value) $("subtipo").value=spJ;
+        st.className="status ok"; st.textContent=cntJson+" genes carregados via formato JSON.";
+        return true;
+      }
+    } catch(e){}
+  }
+
+  // 2. Pares gene=valor ou gene:valor
   var pares=txt.match(/([a-zA-Z0-9_\-]+)\s*[:=]\s*([+-]?\d+(?:[.,]\d+)?)/g);
-  if(pares&&pares.length){
-    var novo={},n=0,desc=[];
+  if(pares && pares.length>0){
+    var novo={}, n=0, desc=[];
     pares.forEach(function(p){
       var m=p.match(/([a-zA-Z0-9_\-]+)\s*[:=]\s*([+-]?\d+(?:[.,]\d+)?)/);
-      var g=m[1].toLowerCase();
-      if(genes.indexOf(g)===-1){desc.push(m[1]);return;}
-      novo[g]=parseFloat(m[2].replace(",",".")); n++;});
-    if(!n){ st.className="status erro"; st.textContent="Nenhum gene reconhecido. Use nomes do painel, ex.: aurka=1,2"; return false; }
-    expressao=novo; temExpressao=true; exemploAtual=null;
+      if(!m) return;
+      var g=m[1].toLowerCase().trim();
+      if(genes.indexOf(g)===-1){ desc.push(m[1]); return; }
+      novo[g]=parseFloat(m[2].replace(",",".")); n++;
+    });
+    if(n>0){
+      expressao=novo; temExpressao=true; exemploAtual=null;
+      document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+      var sp=subPredito();
+      if(sp && !$("subtipo").value) $("subtipo").value=sp;
+      st.className="status ok";
+      st.textContent=n+" gene(s) definidos; os demais na média da coorte (z = 0)."+
+        (desc.length?" Ignorados: "+desc.slice(0,4).join(", ")+".":"");
+      return true;
+    }
+  }
+
+  // 3. Tabela CSV / TSV delimitada
+  var linhas=txt.split(/\r?\n/).filter(function(l){return l.trim().length>0;});
+  var sep=txt.indexOf("\t")!==-1?"\t":(txt.indexOf(";")!==-1?";":",");
+
+  if(linhas.length>=2){
+    var cab=parseCSVLine(linhas[0], sep).map(function(s){return s.toLowerCase().replace(/"/g,"").trim();});
+    var geneMatches=cab.filter(function(h){return genes.indexOf(h)!==-1;});
+    if(geneMatches.length>=50){
+      var dLinha=parseCSVLine(linhas[1], sep);
+      var nvMap={}, cnt=0;
+      for(var i=0;i<cab.length;i++){
+        var g=cab[i];
+        if(genes.indexOf(g)!==-1 && i<dLinha.length){
+          var v=parseFloat(dLinha[i].replace(/"/g,"").replace(",","."));
+          if(!isNaN(v)){ nvMap[g]=v; cnt++; }
+        }
+      }
+      if(cnt>=100){
+        var idxIdade=cab.indexOf("age_at_diagnosis"), idxGrau=cab.indexOf("neoplasm_histologic_grade");
+        var idxTam=cab.indexOf("tumor_size"), idxLinfo=cab.indexOf("lymph_nodes_examined_positive");
+        var idxNpi=cab.indexOf("nottingham_prognostic_index"), idxSub=cab.indexOf("subtipo");
+        if(idxIdade!==-1 && idxIdade<dLinha.length && dLinha[idxIdade]) $("idade").value=dLinha[idxIdade].replace(/"/g,"").replace(".",",");
+        if(idxGrau!==-1 && idxGrau<dLinha.length && dLinha[idxGrau]) $("grau").value=dLinha[idxGrau].replace(/"/g,"");
+        if(idxTam!==-1 && idxTam<dLinha.length && dLinha[idxTam]) $("tamanho").value=dLinha[idxTam].replace(/"/g,"").replace(".",",");
+        if(idxLinfo!==-1 && idxLinfo<dLinha.length && dLinha[idxLinfo]) $("linfo").value=dLinha[idxLinfo].replace(/"/g,"").replace(".",",");
+        if(idxNpi!==-1 && idxNpi<dLinha.length && dLinha[idxNpi]) $("npi").value=dLinha[idxNpi].replace(/"/g,"").replace(".",",");
+        if(idxSub!==-1 && idxSub<dLinha.length && dLinha[idxSub]) $("subtipo").value=dLinha[idxSub].replace(/"/g,"");
+        expressao=nvMap; temExpressao=true; exemploAtual=null;
+        document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+        var spCsv=subPredito();
+        if(spCsv && !$("subtipo").value) $("subtipo").value=spCsv;
+        st.className="status ok"; st.textContent=cnt+" genes lidos com sucesso da planilha CSV.";
+        return true;
+      }
+    }
+  }
+
+  // 4. Linha única de CSV ou TSV
+  var ultimaLinhaCols=parseCSVLine(linhas[linhas.length-1], sep);
+  if(ultimaLinhaCols.length>=genes.length){
+    var gCols=ultimaLinhaCols.slice(ultimaLinhaCols.length-genes.length);
+    var nvSingle={}, cntSingle=0;
+    for(var gi=0;gi<genes.length;gi++){
+      var num=parseFloat(gCols[gi].replace(/"/g,"").replace(",","."));
+      if(!isNaN(num)){ nvSingle[genes[gi]]=num; cntSingle++; }
+    }
+    if(cntSingle>=400){
+      if(ultimaLinhaCols.length===501){
+        if(ultimaLinhaCols[1]) $("idade").value=ultimaLinhaCols[1].replace(/"/g,"").replace(".",",");
+        if(ultimaLinhaCols[2]) $("grau").value=ultimaLinhaCols[2].replace(/"/g,"");
+        if(ultimaLinhaCols[3]) $("tamanho").value=ultimaLinhaCols[3].replace(/"/g,"").replace(".",",");
+        if(ultimaLinhaCols[4]) $("linfo").value=ultimaLinhaCols[4].replace(/"/g,"").replace(".",",");
+        if(ultimaLinhaCols[5]) $("npi").value=ultimaLinhaCols[5].replace(/"/g,"").replace(".",",");
+        if(ultimaLinhaCols[6]) $("subtipo").value=ultimaLinhaCols[6].replace(/"/g,"");
+      }
+      expressao=nvSingle; temExpressao=true; exemploAtual=null;
+      document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
+      var spS=subPredito();
+      if(spS && !$("subtipo").value) $("subtipo").value=spS;
+      st.className="status ok"; st.textContent=cntSingle+" genes lidos na ordem da coorte METABRIC.";
+      return true;
+    }
+  }
+
+  // 5. Extração direta de valores numéricos
+  var tokens=txt.split(/[\s,;\t]+/).filter(function(s){return s.length>0;});
+  var nums=[];
+  for(var ti=0;ti<tokens.length;ti++){
+    var raw=tokens[ti].replace(/"/g,"").replace(",",".");
+    var nVal=parseFloat(raw);
+    if(!isNaN(nVal)) nums.push(nVal);
+  }
+  if(nums.length>=genes.length){
+    var geneNums=nums.slice(nums.length-genes.length);
+    var nvAll={};
+    for(var gi2=0;gi2<genes.length;gi2++) nvAll[genes[gi2]]=geneNums[gi2];
+    expressao=nvAll; temExpressao=true; exemploAtual=null;
     document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
-    st.className="status ok";
-    st.textContent=n+" gene(s) definidos; os demais na média da coorte (z = 0)."+
-      (desc.length?" Ignorados: "+desc.slice(0,4).join(", ")+".":"");
+    var spN=subPredito();
+    if(spN && !$("subtipo").value) $("subtipo").value=spN;
+    st.className="status ok"; st.textContent=genes.length+" genes lidos na ordem da coorte METABRIC.";
     return true;
   }
-  var linhas=txt.split(/\r?\n/).filter(function(l){return l.trim().length;});
-  var vals=linhas[linhas.length-1].split(/[\s,;\t]+/)
-    .map(function(s){return dec(String(s).replace(/"/g,""));})
-    .filter(function(v){return !isNaN(v);});
-  if(vals.length>genes.length) vals=vals.slice(vals.length-genes.length);
-  if(vals.length!==genes.length){
-    st.className="status erro";
-    st.textContent="Encontrei "+vals.length+" números; são necessários exatamente "+genes.length+
-      " valores de expressão. Cole apenas a faixa de genes.";
-    return false;
-  }
-  var nv={}; genes.forEach(function(g,i){nv[g]=vals[i];});
-  expressao=nv; temExpressao=true; exemploAtual=null;
-  document.querySelectorAll(".ex").forEach(function(x){x.classList.remove("sel");});
-  st.className="status ok"; st.textContent=genes.length+" genes lidos na ordem da planilha.";
-  return true;
+
+  st.className="status erro";
+  st.textContent="Encontrei "+nums.length+" valores numéricos; são necessários os "+genes.length+
+    " genes ou pares no formato gene=valor (ex.: aurka=1,2, stat5a=-0,8).";
+  return false;
 }
 $("btPredizerGenes").addEventListener("click",function(){
   if(leExpressao()){ calcula(); mostraDesfecho();
     $("pct").scrollIntoView({behavior:"smooth",block:"nearest"}); }
+});
+var btLerExp=$("btLerExpressao")||$("btColar");
+if(btLerExp){
+  btLerExp.addEventListener("click",function(){
+    if(leExpressao()){ calcula(); mostraDesfecho(); }
+  });
+}
+var timerColar=null;
+$("colar").addEventListener("input",function(){
+  clearTimeout(timerColar);
+  timerColar=setTimeout(function(){
+    if(($("colar").value||"").trim()){
+      if(leExpressao()){ calcula(); mostraDesfecho(); }
+    }
+  },400);
 });
 $("btZerar").addEventListener("click",function(){
   expressao={}; temExpressao=false; exemploAtual=null; $("colar").value="";
@@ -733,15 +896,18 @@ function calcula(){
     var probs=predizSubtipo();
     var ord=probs.map(function(v,i){return [v,SUB.classes[i]];}).sort(function(a,b){return b[0]-a[0];});
     var top=ord[0];
-    alvo.innerHTML="Subtipo molecular predito: <b>"+top[1]+"</b>"+
-      (sub&&top[1]!==sub?" <span style='color:var(--alerta);font-weight:600'>— diverge do informado ("+sub+")</span>":"");
+    alvo.innerHTML='<div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px">'+
+      '<span>Subtipo molecular predito:</span>'+
+      '<strong style="font-size:17px;color:var(--azul);letter-spacing:-0.2px">'+top[1]+'</strong>'+
+      '<span class="badge-opc ok" style="background:#ecfdf5;color:#047857;border-color:#a7f3d0;font-weight:600;font-size:12px;padding:3px 8px">'+pct(top[0])+'% de probabilidade</span>'+
+      '</div>';
     pr.innerHTML=ord.map(function(o,i){return '<div class="prob'+(i===0?" top":"")+'"><span>'+o[1]+
       '</span><span class="pb"><i style="width:'+(o[0]*100).toFixed(1)+'%"></i></span>'+
-      '<span class="v dado">'+(o[0]*100).toFixed(0)+'%</span></div>';}).join("");
-    var msg="Confiança "+pct(top[0])+"%. Acerto histórico da classe "+top[1]+": "+pct(SUB.acerto_por_classe[top[1]])+"%.";
-    if(top[0]<0.6) msg+=" Confiança baixa: nessa faixa o classificador acerta pouco mais que a metade das vezes.";
-    if(top[1]==="Normal") msg+=" O grupo Normal-like tem o pior desempenho e pode refletir amostra com baixa celularidade tumoral.";
-    cs.className="status"+(top[0]<0.6?" erro":""); cs.textContent=msg;
+      '<span class="v dado">'+(o[0]*100).toFixed(1).replace(".",",")+'%</span></div>';}).join("");
+    var msg="Classificador treinado sobre a coorte METABRIC (489 genes). Confiança de predição: "+pct(top[0])+"%. Acurácia histórica na classe "+top[1]+": "+pct(SUB.acerto_por_classe[top[1]])+"%.";
+    if(top[0]<0.6) msg+=" Nota: confiança moderada nesta amostra.";
+    if(top[1]==="Normal") msg+=" O grupo Normal-like reflete frequentemente amostras com menor pureza ou celularidade tumoral.";
+    cs.className="status"+(top[0]<0.6?"":" ok"); cs.textContent=msg;
   }
 }
 

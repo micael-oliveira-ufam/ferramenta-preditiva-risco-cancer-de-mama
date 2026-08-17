@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" width="100%" height="100%">
+  <!-- Circular Seal Base -->
+  <defs>
+    <!-- Top curved text path -->
+    <path id="top-curve" d="M 45,200 A 155,155 0 0,1 355,200" fill="none" />
+    <!-- Bottom curved text path -->
+    <path id="bottom-curve" d="M 52,220 A 152,152 0 0,0 348,220" fill="none" />
+  </defs>
+
+  <!-- Outer Ring Background -->
+  <circle cx="200" cy="200" r="190" fill="#FFFFFF" stroke="#111827" stroke-width="6" />
+  <circle cx="200" cy="200" r="148" fill="#FFFFFF" stroke="#111827" stroke-width="2.5" />
+
+  <!-- Top Text: UNIVERSIDADE FEDERAL DO AMAZONAS -->
+  <text font-family="'IBM Plex Sans', 'Arial Black', sans-serif" font-weight="900" font-size="19" fill="#111827" letter-spacing="1.5">
+    <textPath href="#top-curve" startOffset="50%" text-anchor="middle">
+      UNIVERSIDADE FEDERAL DO AMAZONAS
+    </textPath>
+  </text>
+
+  <!-- Side Dots -->
+  <circle cx="38" cy="235" r="7" fill="#111827" />
+  <circle cx="362" cy="225" r="7" fill="#111827" />
+
+  <!-- Bottom Latin Motto: IN UNIVERSA SCIENTIA VERITAS -->
+  <text font-family="'IBM Plex Sans', 'Arial Black', sans-serif" font-weight="900" font-size="17" fill="#111827" letter-spacing="2">
+    <textPath href="#bottom-curve" startOffset="50%" text-anchor="middle">
+      IN UNIVERSA SCIENTIA VERITAS
+    </textPath>
+  </text>
+
+  <!-- Laurel Wreath (Ramos de louro verdes) -->
+  <!-- Left branch -->
+  <g fill="#16A34A" stroke="#14532D" stroke-width="1.5">
+    <!-- Leaves Left -->
+    <path d="M 130,75 C 105,75 90,95 90,115 C 110,115 125,95 130,75 Z" />
+    <path d="M 98,100 C 75,105 65,125 70,145 C 90,140 100,120 98,100 Z" />
+    <path d="M 75,135 C 55,145 50,170 58,190 C 78,180 82,155 75,135 Z" />
+    <path d="M 60,180 C 45,195 45,225 58,245 C 75,230 75,200 60,180 Z" />
+    <path d="M 60,235 C 50,255 58,285 75,300 C 88,280 82,250 60,235 Z" />
+    <path d="M 78,285 C 75,310 90,335 110,345 C 120,325 110,295 78,285 Z" />
+    <path d="M 110,330 C 115,350 140,368 165,368 C 165,345 140,330 110,330 Z" />
+    
+    <!-- Leaves Right -->
+    <path d="M 270,75 C 295,75 310,95 310,115 C 290,115 275,95 270,75 Z" />
+    <path d="M 302,100 C 325,105 335,125 330,145 C 310,140 300,120 302,100 Z" />
+    <path d="M 325,135 C 345,145 350,170 342,190 C 322,180 318,155 325,135 Z" />
+    <path d="M 340,180 C 355,195 355,225 342,245 C 325,230 325,200 340,180 Z" />
+    <path d="M 340,235 C 350,255 342,285 325,300 C 312,280 318,250 340,235 Z" />
+    <path d="M 322,285 C 325,310 310,335 290,345 C 280,325 290,295 322,285 Z" />
+    <path d="M 290,330 C 285,350 260,368 235,368 C 235,345 260,330 290,330 Z" />
+  </g>
+
+  <!-- Wreath Stem Base (Crossed branches) -->
+  <path d="M 140,355 Q 200,380 230,360 M 260,355 Q 200,380 170,360" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round" />
+
+  <!-- Guaraná Berries (Red clusters with details on left) -->
+  <g fill="#DC2626" stroke="#991B1B" stroke-width="1.5">
+    <circle cx="95" cy="120" r="7" />
+    <circle cx="85" cy="128" r="7.5" />
+    <circle cx="98" cy="132" r="7" />
+    <circle cx="90" cy="140" r="6.5" />
+    <circle cx="78" cy="225" r="7.5" />
+    <circle cx="68" cy="235" r="7" />
+    <circle cx="82" cy="242" r="8" />
+    <circle cx="72" cy="250" r="7.5" />
+    <circle cx="85" cy="255" r="6.5" />
+  </g>
+
+  <!-- Top Flowers (Vitória-régia / Maués blossoms) -->
+  <g fill="#E11D48" stroke="#9F1239" stroke-width="1.5">
+    <path d="M 190,65 C 185,55 170,60 175,70 C 165,75 175,90 185,85 C 190,95 205,90 200,80 C 210,75 200,60 190,65 Z" />
+    <circle cx="188" cy="73" r="3.5" fill="#FFFFFF" stroke="#9F1239" stroke-width="1" />
+    
+    <path d="M 215,70 C 210,60 225,55 228,68 C 238,65 240,80 230,82 C 235,90 220,95 218,85 C 208,85 210,72 215,70 Z" />
+    <circle cx="223" cy="76" r="3" fill="#FFFFFF" stroke="#9F1239" stroke-width="1" />
+
+    <path d="M 210,95 C 205,85 220,80 222,90 C 230,90 232,102 222,105 C 225,115 210,115 210,108 C 200,108 202,98 210,95 Z" />
+    <circle cx="212" cy="100" r="2.5" fill="#FFFFFF" stroke="#9F1239" stroke-width="1" />
+  </g>
+
+  <!-- Central Water Lines (Encontro das Águas - Rio Negro e Solimões) -->
+  <g fill="none" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 115,160 C 145,135 225,165 265,120" />
+    <path d="M 130,195 C 160,205 185,225 185,270 C 185,300 155,335 145,350" />
+    <path d="M 265,150 C 245,175 230,220 200,285 C 185,320 175,345 170,355" />
+    <!-- Small water droplet -->
+    <path d="M 235,165 C 240,150 248,155 240,170 C 232,170 230,165 235,165 Z" fill="#FFFFFF" stroke="#111827" stroke-width="2.5" />
+  </g>
+
+  <!-- Yellow Star of Amazonas -->
+  <polygon points="270,182 276,198 293,198 280,208 285,224 270,214 255,224 260,208 247,198 264,198" fill="#FACC15" stroke="#111827" stroke-width="2" />
+
+  <!-- Bold UFAM Typography below Seal -->
+  <text x="200" y="495" font-family="'IBM Plex Sans', 'Arial Rounded MT Bold', sans-serif" font-weight="900" font-size="95" fill="#111827" text-anchor="middle" letter-spacing="4">
+    UFAM
+  </text>
+</svg>

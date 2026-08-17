@@ -1,0 +1,8 @@
+{
+  "name": "Painel METABRIC - Cancer de Mama",
+  "description": "Painel de estratificação de risco e subtipagem em câncer de mama desenvolvido na Faculdade de Ciências Farmacêuticas da Universidade Federal do Amazonas (UFAM).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
